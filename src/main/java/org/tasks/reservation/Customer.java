@@ -8,7 +8,7 @@ public class Customer {
     private final SpaceManager manager = new SpaceManager();
     private final Scanner scanner = new Scanner(System.in);
 
-    public void reserve() {
+    protected void reserve() {
         manager.showSpaces(CoworkingSpace::isAvailable);
         System.out.println("Please, choose one available coworking spaces");
 
@@ -28,7 +28,7 @@ public class Customer {
         System.out.println("RESERVED!");
     }
 
-    public void cancelReservation() {
+    protected void cancelReservation() {
         System.out.println("It's list of your reservations: ");
         manager.showMyReservation();
         System.out.println("Please, choose the number of space, that you would like to cancel. ");

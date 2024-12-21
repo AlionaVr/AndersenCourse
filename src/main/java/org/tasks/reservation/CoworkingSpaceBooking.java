@@ -4,12 +4,12 @@ public class CoworkingSpaceBooking {
     private final CoworkingSpace coworkingSpace;
     private final String bookingDetails;
 
-    public CoworkingSpaceBooking(CoworkingSpace coworkingSpace, String bookingDetails) {
+    protected CoworkingSpaceBooking(CoworkingSpace coworkingSpace, String bookingDetails) {
         this.coworkingSpace = coworkingSpace;
         this.bookingDetails = bookingDetails;
     }
 
-    public CoworkingSpace getCoworkingSpace() {
+    protected CoworkingSpace getCoworkingSpace() {
         return coworkingSpace;
     }
 

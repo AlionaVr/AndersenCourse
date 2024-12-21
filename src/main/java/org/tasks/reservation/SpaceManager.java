@@ -11,7 +11,7 @@ public class SpaceManager {
     private final LinkedList<CoworkingSpaceBooking> myReservations = new LinkedList<>();
     private final Scanner scanner = new Scanner(System.in);
 
-    public void showSpaces(Predicate<CoworkingSpace> availabilityFilter) {
+    protected void showSpaces(Predicate<CoworkingSpace> availabilityFilter) {
         int counter = 0;
         for (CoworkingSpace space : spaces) {
             if (availabilityFilter == null) {
@@ -26,13 +26,13 @@ public class SpaceManager {
         }
     }
 
-    public void showSpaceWithNumber(int counter, CoworkingSpace space) {
+    protected void showSpaceWithNumber(int counter, CoworkingSpace space) {
         System.out.println("\n-------------------------------------------------");
         System.out.printf("%d.\n%s", counter, space.toString());
         System.out.println("-------------------------------------------------");
     }
 
-    public void showMyReservation() {
+    protected void showMyReservation() {
         int counter = 0;
         for (CoworkingSpaceBooking mySpace : myReservations) {
             System.out.println("\n-------------------------------------------------");

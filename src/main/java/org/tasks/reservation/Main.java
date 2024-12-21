@@ -17,7 +17,7 @@ public class Main {
         main.showMainMenu();
     }
 
-    public void showMainMenu() {
+    private void showMainMenu() {
         System.out.println("Hello! Welcome to our Coworking! Please log in to the system.");
         List<String> options = Arrays.asList(
                 "Admin Login",
@@ -37,7 +37,7 @@ public class Main {
         }
     }
 
-    public void showAdminMenu() {
+    private void showAdminMenu() {
         List<String> options = Arrays.asList(
                 "Add a new coworking space",
                 "Remove a coworking space",
@@ -64,7 +64,7 @@ public class Main {
     }
 
 
-    public void showCustomerMenu() {
+    private void showCustomerMenu() {
         List<String> options = Arrays.asList(
                 "Browse available spaces",
                 "Make a reservation",
@@ -92,7 +92,7 @@ public class Main {
         }
     }
 
-    protected void showOptions(List<String> options) {
+    private void showOptions(List<String> options) {
         System.out.println("Please, choose the option:");
         for (int i = 0; i < options.size(); i++) {
             System.out.println((i + 1) + ". " + options.get(i));
