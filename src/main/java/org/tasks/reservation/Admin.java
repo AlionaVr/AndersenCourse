@@ -6,8 +6,8 @@ import static org.tasks.reservation.Main.spaces;
 
 public class Admin {
 
-    Scanner scanner = new Scanner(System.in);
-    SpaceManager manager = new SpaceManager();
+    private final Scanner scanner = new Scanner(System.in);
+    private final SpaceManager manager = new SpaceManager();
 
     //Add a new coworking space
     protected void addSpace() {
@@ -25,8 +25,8 @@ public class Admin {
             CoworkingSpace newSpace = new CoworkingSpace(name, type, price);
             spaces.add(newSpace);
 
-            System.out.println("Space added successfully! That's all spaces");
-            SpaceManager.showSpaces(space -> true);
+            System.out.println("Space added successfully! That's all spaces:");
+            manager.showSpaces(space -> true);
 
         } catch (NumberFormatException e) {
             System.out.println("Invalid price format. Please enter a valid number for price.");
@@ -35,25 +35,21 @@ public class Admin {
 
     //Remove a coworking space
     protected void removeSpace() {
-        SpaceManager.showSpaces(null);
+        manager.showSpaces(null);
         System.out.println("Please, choose the number of space, that you would like to delete.");
-        int numberOfSpace = Integer.parseInt(scanner.nextLine());
-        while (numberOfSpace <= 0 || numberOfSpace > spaces.size()) {
-            System.out.println("Invalid input. Please, check your input data.");
-            numberOfSpace = Integer.parseInt(scanner.nextLine());
-        }
+        int numberOfSpace = manager.getValidInputNumber(Integer.parseInt(scanner.nextLine()), spaces.size());
+        ;
+
         spaces.remove(numberOfSpace - 1);
         System.out.println("DELETED!");
     }
 
     protected void updateSpace() {
-        SpaceManager.showSpaces(null);
+        manager.showSpaces(null);
         System.out.println("Please, choose the number of space, that you would like to update.");
-        int numberOfSpace = Integer.parseInt(scanner.nextLine());
-        while (numberOfSpace <= 0 || numberOfSpace > spaces.size()) {
-            System.out.println("Invalid input. Please, check your input data");
-            numberOfSpace = Integer.parseInt(scanner.nextLine());
-        }
+
+        int numberOfSpace = manager.getValidInputNumber(Integer.parseInt(scanner.nextLine()), spaces.size());
+
         spaces.remove(numberOfSpace - 1);
         addSpace();
         System.out.println("UPDATED!");
