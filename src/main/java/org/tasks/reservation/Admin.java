@@ -36,10 +36,10 @@ public class Admin {
     //Remove a coworking space
     protected void removeSpace() {
         SpaceManager.showSpaces(null);
-        System.out.println("Please, choose the number of space, that you would like to delete. ");
+        System.out.println("Please, choose the number of space, that you would like to delete.");
         int numberOfSpace = Integer.parseInt(scanner.nextLine());
         while (numberOfSpace <= 0 || numberOfSpace > spaces.size()) {
-            System.out.println("Invalid input. Please, check your input data");
+            System.out.println("Invalid input. Please, check your input data.");
             numberOfSpace = Integer.parseInt(scanner.nextLine());
         }
         spaces.remove(numberOfSpace - 1);
