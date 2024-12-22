@@ -38,7 +38,6 @@ public class Admin {
         manager.showSpaces(null);
         System.out.println("Please, choose the number of space, that you would like to delete.");
         int numberOfSpace = manager.getValidInputNumber(Integer.parseInt(scanner.nextLine()), spaces.size());
-        ;
 
         spaces.remove(numberOfSpace - 1);
         System.out.println("DELETED!");

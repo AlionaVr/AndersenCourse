@@ -1,8 +1,6 @@
 package org.tasks.reservation;
 
-import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -19,14 +17,15 @@ public class Main {
 
     private void showMainMenu() {
         System.out.println("Hello! Welcome to our Coworking! Please log in to the system.");
-        List<String> options = Arrays.asList(
-                "Admin Login",
-                "User Login",
-                "Exit");
-        while (true) {
-            showOptions(options);
 
-            int input = manager.getValidInputNumber(Integer.parseInt(scanner.nextLine()), options.size());
+        while (true) {
+            System.out.println("""
+                    Please, choose the option:
+                    1.Admin Login
+                    2.User Login
+                    3.Exit""");
+
+            int input = manager.getValidInputNumber(Integer.parseInt(scanner.nextLine()), 3);
 
             switch (input) {
                 case 1 -> showAdminMenu();
@@ -38,18 +37,19 @@ public class Main {
     }
 
     private void showAdminMenu() {
-        List<String> options = Arrays.asList(
-                "Add a new coworking space",
-                "Remove a coworking space",
-                "Update a coworking space",
-                "View all reservations",
-                "Return to MAIN menu",
-                "Exit");
         System.out.println("Hello, Admin!");
 
         while (true) {
-            showOptions(options);
-            int input = manager.getValidInputNumber(Integer.parseInt(scanner.nextLine()), options.size());
+            System.out.println("""
+                    Please, choose the option:
+                    1.Add a new coworking space
+                    2.Remove a coworking space
+                    3.Update a coworking space
+                    4.View all reservations
+                    5.Return to MAIN menu
+                    6.Exit""");
+
+            int input = manager.getValidInputNumber(Integer.parseInt(scanner.nextLine()), 6);
 
             switch (input) {
                 case 1 -> admin.addSpace();
@@ -65,20 +65,18 @@ public class Main {
 
 
     private void showCustomerMenu() {
-        List<String> options = Arrays.asList(
-                "Browse available spaces",
-                "Make a reservation",
-                "View my reservations",
-                "Cancel a reservation",
-                "Return to MAIN menu",
-                "Exit"
-        );
         System.out.println("Hello, Customer!");
 
         while (true) {
-            showOptions(options);
+            System.out.println("""
+                    1.Browse available spaces
+                    2.Make a reservation
+                    3.View my reservations
+                    4.Cancel a reservation
+                    5.Return to MAIN menu
+                    6.Exit""");
 
-            int input = manager.getValidInputNumber(Integer.parseInt(scanner.nextLine()), options.size());
+            int input = manager.getValidInputNumber(Integer.parseInt(scanner.nextLine()), 6);
 
             switch (input) {
                 case 1 -> manager.showSpaces(CoworkingSpace::isAvailable);
@@ -89,13 +87,6 @@ public class Main {
                 case 6 -> exitProgram();
                 default -> System.out.println("Incorrect input number");
             }
-        }
-    }
-
-    private void showOptions(List<String> options) {
-        System.out.println("Please, choose the option:");
-        for (int i = 0; i < options.size(); i++) {
-            System.out.println((i + 1) + ". " + options.get(i));
         }
     }
 
