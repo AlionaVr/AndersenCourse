@@ -1,6 +1,8 @@
 package org.tasks.reservation;
 
-public class CoworkingSpace {
+import java.io.Serializable;
+
+public class CoworkingSpace implements Serializable {
     private final String name;
     private final String type;
     private final double price;
