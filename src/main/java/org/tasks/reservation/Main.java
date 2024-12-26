@@ -1,24 +1,45 @@
 package org.tasks.reservation;
 
-import java.util.LinkedList;
+import java.io.File;
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Main {
-    public static LinkedList<CoworkingSpace> spaces = new LinkedList<>();
-    private final SpaceManager manager = new SpaceManager();
+    private final static Repository repository = new Repository();
+    private final SpaceManager manager = new SpaceManager(repository);
     private final Scanner scanner = new Scanner(System.in);
-    private final Admin admin = new Admin();
-    private final Customer customer = new Customer();
+    private final Admin admin = new Admin(repository);
+    private final Customer customer = new Customer(repository);
+    private boolean flag = true;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Main main = new Main();
+
+        File file = new File("save.txt");
+        if (file.exists()) {
+            repository.readFile();
+        } else {
+            System.out.println("No saved file found, starting with an empty repository.");
+        }
+        /*
+        try (FileInputStream fileInputStream = new FileInputStream("save.txt")) {
+            repository.readFile();
+            System.out.println("data are restored\n");
+        } catch (FileNotFoundException e) {
+            System.out.println("No saved file found, starting with an empty repository.");
+        } catch (IOException e) {
+            System.out.println("An error occurred while reading the file: " + e.getMessage());
+        }*/
+
         main.showMainMenu();
+        repository.saveObject();
     }
 
     private void showMainMenu() {
         System.out.println("Hello! Welcome to our Coworking! Please log in to the system.");
 
-        while (true) {
+
+        while (flag) {
             System.out.println("""
                     Please, choose the option:
                     1.Admin Login
@@ -39,7 +60,7 @@ public class Main {
     private void showAdminMenu() {
         System.out.println("Hello, Admin!");
 
-        while (true) {
+        while (flag) {
             System.out.println("""
                     Please, choose the option:
                     1.Add a new coworking space
@@ -67,7 +88,7 @@ public class Main {
     private void showCustomerMenu() {
         System.out.println("Hello, Customer!");
 
-        while (true) {
+        while (flag) {
             System.out.println("""
                     1.Browse available spaces
                     2.Make a reservation
@@ -92,6 +113,6 @@ public class Main {
 
     private void exitProgram() {
         System.out.println("Bye, have a nice day!");
-        System.exit(0);
+        flag = false;
     }
 }
