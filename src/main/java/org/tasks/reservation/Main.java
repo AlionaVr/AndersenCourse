@@ -16,6 +16,16 @@ public class Main {
         } else {
             System.out.println("No saved file found, starting with an empty repository.");
         }
+      /*
+        try (FileInputStream fileInputStream = new FileInputStream("save.txt")) {
+            repository.readFile();
+            System.out.println("data are restored\n");
+        } catch (FileNotFoundException e) {
+            System.out.println("No saved file found, starting with an empty repository.");
+        } catch (IOException e) {
+            System.out.println("An error occurred while reading the file: " + e.getMessage());
+        }*/
+      
         main.tryToLoadMenu();
 
         repository.saveObject();
@@ -34,5 +44,4 @@ public class Main {
             System.out.println("Something went wrong " + e.getMessage());
         }
     }
-
 }
