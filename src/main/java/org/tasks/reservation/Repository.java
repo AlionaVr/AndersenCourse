@@ -1,20 +1,19 @@
 package org.tasks.reservation;
 
 import java.io.*;
-import java.util.LinkedList;
 
 public class Repository implements Serializable {
-    private LinkedList<CoworkingSpace> spaces = new LinkedList<>();
-    private LinkedList<CoworkingSpaceBooking> myReservations = new LinkedList<>();
+    private CustomList<CoworkingSpace> spaces = new CustomList<>();
+    private CustomList<CoworkingSpaceBooking> myReservations = new CustomList<>();
 
     public Repository() {
     }
 
-    public LinkedList<CoworkingSpace> getSpaces() {
+    public CustomList<CoworkingSpace> getSpaces() {
         return spaces;
     }
 
-    public LinkedList<CoworkingSpaceBooking> getMyReservations() {
+    public CustomList<CoworkingSpaceBooking> getMyReservations() {
         return myReservations;
     }
 

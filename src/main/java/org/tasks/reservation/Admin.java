@@ -13,7 +13,6 @@ public class Admin {
         this.manager = new SpaceManager(repository);
     }
 
-    //Add a new coworking space
     protected void addSpace() {
         System.out.println("Enter name of space, type and price: \n ***in format: Name,type,price ");
         String input = scanner.nextLine();
@@ -38,7 +37,6 @@ public class Admin {
         }
     }
 
-    //Remove a coworking space
     protected void removeSpace() {
         manager.showSpaces(null);
         if (!repository.getSpaces().isEmpty()) {
