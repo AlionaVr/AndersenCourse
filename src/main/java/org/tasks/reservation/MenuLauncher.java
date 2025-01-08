@@ -22,10 +22,10 @@ public class MenuLauncher {
 
         while (flag) {
             System.out.println("""
-                Please, choose the option:
-                1.Admin Login
-                2.User Login
-                3.Exit""");
+                    Please, choose the option:
+                    1.Admin Login
+                    2.User Login
+                    3.Exit""");
 
             int input = manager.getValidInputNumber(Integer.parseInt(scanner.nextLine()), 3);
 
@@ -43,13 +43,13 @@ public class MenuLauncher {
 
         while (flag) {
             System.out.println("""
-                Please, choose the option:
-                1.Add a new coworking space
-                2.Remove a coworking space
-                3.Update a coworking space
-                4.View all reservations
-                5.Return to MAIN menu
-                6.Exit""");
+                    Please, choose the option:
+                    1.Add a new coworking space
+                    2.Remove a coworking space
+                    3.Update a coworking space
+                    4.View all reservations
+                    5.Return to MAIN menu
+                    6.Exit""");
 
             int input = manager.getValidInputNumber(Integer.parseInt(scanner.nextLine()), 6);
 
@@ -71,12 +71,12 @@ public class MenuLauncher {
 
         while (flag) {
             System.out.println("""
-                1.Browse available spaces
-                2.Make a reservation
-                3.View my reservations
-                4.Cancel a reservation
-                5.Return to MAIN menu
-                6.Exit""");
+                    1.Browse available spaces
+                    2.Make a reservation
+                    3.View my reservations
+                    4.Cancel a reservation
+                    5.Return to MAIN menu
+                    6.Exit""");
 
             int input = manager.getValidInputNumber(Integer.parseInt(scanner.nextLine()), 6);
 

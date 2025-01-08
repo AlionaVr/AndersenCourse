@@ -23,7 +23,7 @@ public class Customer {
             CoworkingSpace coworkingSpaceToBeBooked = repository.getSpaces().get(numberChosenSpace - 1);
 
             System.out.println("Please, enter booking details: ");
-            String bookingDetails = scanner.nextLine();
+            String bookingDetails = scanner.nextLine().trim();
 
             CoworkingSpaceBooking coworkingSpaceBooking = new CoworkingSpaceBooking(coworkingSpaceToBeBooked, bookingDetails);
 
@@ -33,6 +33,7 @@ public class Customer {
 
             System.out.println("RESERVED!");
         }
+
     }
 
     protected void cancelReservation() {
@@ -49,6 +50,4 @@ public class Customer {
             System.out.println("CANCELED!");
         }
     }
-
-
 }

@@ -1,8 +1,9 @@
 package org.tasks.reservation;
 
+import java.util.List;
 import java.util.Scanner;
 import java.util.function.Predicate;
-
+import java.util.stream.IntStream;
 
 
 public class SpaceManager {
@@ -15,17 +16,15 @@ public class SpaceManager {
     }
 
     protected void showSpaces(Predicate<CoworkingSpace> availabilityFilter) {
-        int counter = 0;
-        for (CoworkingSpace space : repository.getSpaces()) {
-            if (availabilityFilter == null) {
-                showSpaceWithNumber(++counter, space);
-            } else if (availabilityFilter.test(space)) {
-                showSpaceWithNumber(++counter, space);
-            }
-        }
+        List<CoworkingSpace> filteredSpaces = repository.getSpaces().stream()
+                .filter(availabilityFilter)
+                .toList();
 
-        if (counter == 0) {
+        if (filteredSpaces.isEmpty()) {
             System.out.println("Empty list.");
+        } else {
+            IntStream.range(0, filteredSpaces.size())
+                    .forEach(i -> showSpaceWithNumber(i + 1, filteredSpaces.get(i)));
         }
     }
 
@@ -36,15 +35,17 @@ public class SpaceManager {
     }
 
     protected void showMyReservation() {
-        int counter = 0;
-        for (CoworkingSpaceBooking mySpace : repository.getMyReservations()) {
-            System.out.println("\n-------------------------------------------------");
-            System.out.println(++counter + ".\n" + mySpace);
-            System.out.println("\n-------------------------------------------------");
-        }
+        List<CoworkingSpaceBooking> myReservations = repository.getMyReservations().stream().toList();
 
-        if (counter == 0) {
+        if (myReservations.isEmpty()) {
             System.out.println("Empty list.");
+        } else {
+            IntStream.range(0, myReservations.size())
+                    .forEach(i -> {
+                        System.out.println("\n-------------------------------------------------");
+                        System.out.println((i + 1) + ".\n" + myReservations.get(i));
+                        System.out.println("\n-------------------------------------------------");
+                    });
         }
     }
 

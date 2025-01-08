@@ -2,6 +2,7 @@ package org.tasks.reservation;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.stream.Stream;
 
 
 public class CustomList<T> implements Iterable<T> {
@@ -73,4 +74,9 @@ public class CustomList<T> implements Iterable<T> {
             }
         };
     }
+
+    public Stream<T> stream() {
+        return Arrays.stream(data, 0, size);
+    }
+
 }
