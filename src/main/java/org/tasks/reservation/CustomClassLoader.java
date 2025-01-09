@@ -29,19 +29,19 @@ public class CustomClassLoader extends ClassLoader {
     }
 
     private Class<?> load(String name) throws ClassNotFoundException {
-        // Заменяем точки на слэши для корректного пути
+        // Replacing dots with slashes for the correct path
         try {
             String filePath = directoryPath + name.replace('.', File.separatorChar) + ".class";
             System.out.println(filePath);
 
 
-            // Читаем байты из файла
+            // Reading bytes from a file
             byte[] classBytes;
             try (FileInputStream fis = new FileInputStream(filePath)) {
                 classBytes = fis.readAllBytes();
             }
 
-            // Определяем класс в JVM
+            // Defining a class in the JVM
             return defineClass(name, classBytes, 0, classBytes.length);
         } catch (IOException e) {
             throw new ClassNotFoundException("Could not load class " + name + "from Path" + directoryPath + e.getMessage());

@@ -46,7 +46,7 @@ public class Admin {
     protected void removeSpace() {
         manager.showSpaces(space -> true);
         Optional.of(repository.getSpaces())
-                .filter(spaces -> !spaces.isEmpty())
+                .filter(CustomList::isNotEmpty)
                 .ifPresent(spaces -> {
                     System.out.println("Please, choose the number of space, that you would like to delete.");
                     int numberOfSpace = manager.getValidChosenSpace(spaces.size());
@@ -59,7 +59,7 @@ public class Admin {
         manager.showSpaces(space -> true);
 
         Optional.of(repository.getSpaces())
-                .filter(spaces -> !spaces.isEmpty())
+                .filter(CustomList::isNotEmpty)
                 .ifPresent(spaces -> {
                     System.out.println("Please, choose the number of space, that you would like to update.");
                     int numberOfSpace = manager.getValidChosenSpace(spaces.size());

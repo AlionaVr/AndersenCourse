@@ -1,13 +1,12 @@
 package org.tasks.reservation;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Method;
 
 public class Main {
     private final static Repository repository = new Repository();
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         Main main = new Main();
 
         File file = new File("save.txt");
@@ -17,7 +16,7 @@ public class Main {
             System.out.println("No saved file found, starting with an empty repository.");
         }
         /*
-        try (FileInputStream fileInputStream = new FileInputStream("save.txt")) {
+        try (FileInputStream fis= new FileInputStream("save.txt")) {
             repository.readFile();
             System.out.println("data are restored\n");
         } catch (FileNotFoundException e) {
