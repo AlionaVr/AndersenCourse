@@ -10,13 +10,16 @@ public class CustomList<T> implements Iterable<T> {
     private int size;
     private int capacity;
 
+    @SuppressWarnings("unchecked")
+    // Java can't verify the safety of this cast. So we use this annotation and
+    // take responsibility for this operation.
     public CustomList() {
         this.capacity = 10;
         this.data = (T[]) new Object[capacity];
         this.size = 0;
     }
 
-    // add element at the end of list
+    // check the need of resizing and add element at the end
     public void add(T element) {
         if (size == capacity) {
             resize();
@@ -54,8 +57,8 @@ public class CustomList<T> implements Iterable<T> {
         return size;
     }
 
-    public boolean isEmpty() {
-        return size == 0;
+    public boolean isNotEmpty() {
+        return size > 0;
     }
 
     @Override
