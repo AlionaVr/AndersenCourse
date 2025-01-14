@@ -10,11 +10,10 @@ public class Customer {
 
     public Customer(Repository repository) {
         this.repository = repository;
-        this.manager = new SpaceManager(repository);
+        this.manager = new SpaceManager(repository, scanner);
     }
 
     protected void reserve() {
-        manager.showSpaces(CoworkingSpace::isAvailable);
         if (repository.getSpaces().isNotEmpty()) {
             System.out.println("Choose one available coworking spaces");
 
@@ -37,8 +36,6 @@ public class Customer {
     }
 
     protected void cancelReservation() {
-        System.out.println("It's list of your reservations: ");
-        manager.showMyReservation();
         if (repository.getMyReservations().isNotEmpty()) {
             System.out.println("Choose the number of space, that you would like to cancel. ");
 

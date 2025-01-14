@@ -8,11 +8,12 @@ import java.util.stream.IntStream;
 
 public class SpaceManager {
 
-    private final Scanner scanner = new Scanner(System.in);
+    private final Scanner scanner;
     private final Repository repository;
 
-    public SpaceManager(Repository repository) {
+    public SpaceManager(Repository repository, Scanner scanner) {
         this.repository = repository;
+        this.scanner = scanner;
     }
 
     protected void showSpaces(Predicate<CoworkingSpace> availabilityFilter) {

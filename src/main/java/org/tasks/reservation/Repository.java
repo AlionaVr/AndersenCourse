@@ -10,7 +10,7 @@ public class Repository implements Serializable {
     }
 
     public CustomList<CoworkingSpace> getSpaces() {
-        return spaces;
+        return spaces; // never null!
     }
 
     public CustomList<CoworkingSpaceBooking> getMyReservations() {
@@ -43,6 +43,4 @@ public class Repository implements Serializable {
             System.out.println(ex.getMessage());
         }
     }
-
-
 }

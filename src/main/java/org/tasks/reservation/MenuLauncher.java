@@ -1,5 +1,6 @@
 package org.tasks.reservation;
 
+import java.util.Optional;
 import java.util.Scanner;
 
 public class MenuLauncher {
@@ -7,12 +8,14 @@ public class MenuLauncher {
     private final Admin admin;
     private final Customer customer;
     private final Scanner scanner = new Scanner(System.in);
+    private final Repository repository;
     private boolean flag = true;
 
     public MenuLauncher(Repository repository) {
-        this.manager = new SpaceManager(repository);
-        this.admin = new Admin(repository);
+        this.manager = new SpaceManager(repository, scanner);
+        this.admin = new Admin(repository, scanner);
         this.customer = new Customer(repository);
+        this.repository = repository;
     }
 
     public void showMainMenu() {
@@ -54,15 +57,45 @@ public class MenuLauncher {
             int input = manager.getValidInputNumber(Integer.parseInt(scanner.nextLine()), 6);
 
             switch (input) {
-                case 1 -> admin.addSpace();
-                case 2 -> admin.removeSpace();
-                case 3 -> admin.updateSpace();
+                case 1 -> {
+                    admin.addSpace(enterCoworkingSpaceByUser());
+                    manager.showSpaces(space -> true);
+                }
+                case 2 -> {
+                    manager.showSpaces(space -> true);
+                    int numberOfSpace = enterNumberOfSpaceToDelete();
+                    admin.removeSpace(numberOfSpace);
+                }
+                case 3 -> {
+                    manager.showSpaces(space -> true);
+                    int numberOfSpace = enterNumberOfSpaceToUpdate();
+                    admin.updateSpace(numberOfSpace);
+                }
                 case 4 -> manager.showSpaces(space -> !space.isAvailable());
                 case 5 -> showMainMenu();
                 case 6 -> exitProgram();
                 default -> System.out.println("Incorrect input number");
             }
         }
+    }
+
+    private int enterNumberOfSpaceToUpdate() {
+        System.out.println("Please, choose the number of space, that you would like to update.");
+        return manager.getValidChosenSpace(repository.getSpaces().size());
+    }
+
+    private int enterNumberOfSpaceToDelete() {
+        System.out.println("Please, choose the number of space, that you would like to delete.");
+        return manager.getValidChosenSpace(repository.getSpaces().size());
+    }
+
+    private CoworkingSpace enterCoworkingSpaceByUser() {
+        Optional<CoworkingSpace> coworkingSpace = admin.askUserToWriteCoworkingSpaceString();
+        while (coworkingSpace.isEmpty()) {
+            System.out.println("Invalid input. Please enter data in format: Name,type,price");
+            coworkingSpace = admin.askUserToWriteCoworkingSpaceString();
+        }
+        return coworkingSpace.get();
     }
 
 
@@ -82,9 +115,16 @@ public class MenuLauncher {
 
             switch (input) {
                 case 1 -> manager.showSpaces(CoworkingSpace::isAvailable);
-                case 2 -> customer.reserve();
+                case 2 -> {
+                    manager.showSpaces(CoworkingSpace::isAvailable);
+                    customer.reserve();
+                }
                 case 3 -> manager.showMyReservation();
-                case 4 -> customer.cancelReservation();
+                case 4 -> {
+                    System.out.println("It's list of your reservations: ");
+                    manager.showMyReservation();
+                    customer.cancelReservation();
+                }
                 case 5 -> showMainMenu();
                 case 6 -> exitProgram();
                 default -> System.out.println("Incorrect input number");
