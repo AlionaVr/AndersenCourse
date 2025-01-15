@@ -30,7 +30,7 @@ public class MenuLauncher {
                     2.User Login
                     3.Exit""");
 
-            int input = manager.getValidInputNumber(Integer.parseInt(scanner.nextLine()), 3);
+            int input = manager.getValidInputNumber(3);
 
             switch (input) {
                 case 1 -> showAdminMenu();
@@ -54,7 +54,7 @@ public class MenuLauncher {
                     5.Return to MAIN menu
                     6.Exit""");
 
-            int input = manager.getValidInputNumber(Integer.parseInt(scanner.nextLine()), 6);
+            int input = manager.getValidInputNumber(6);
 
             switch (input) {
                 case 1 -> {
@@ -111,7 +111,7 @@ public class MenuLauncher {
                     5.Return to MAIN menu
                     6.Exit""");
 
-            int input = manager.getValidInputNumber(Integer.parseInt(scanner.nextLine()), 6);
+            int input = manager.getValidInputNumber(6);
 
             switch (input) {
                 case 1 -> manager.showSpaces(CoworkingSpace::isAvailable);

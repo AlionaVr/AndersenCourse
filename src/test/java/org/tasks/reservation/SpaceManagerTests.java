@@ -3,10 +3,9 @@ package org.tasks.reservation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Optional;
 import java.util.Scanner;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class SpaceManagerTests {
@@ -25,12 +24,12 @@ public class SpaceManagerTests {
     void testGetValidInputNumber() {
         //arrange
         int maxNumber = 5;
-        when(scannerMock.nextLine()).thenReturn("5");
+        when(scannerMock.nextLine()).thenReturn("3");
+        when(scannerMock.nextLine()).thenReturn("6");
         //act
-        Optional<CoworkingSpace> inputSpace = manager.getValidInputNumber();
+        int inputSpace = manager.getValidInputNumber(maxNumber);
         //assert
         verify(scannerMock, times(1)).nextLine();
-        assertTrue(inputSpace.isPresent());
-        assertTrue(inputSpace.get().toString().contains("Space1"));
+        assertEquals(3, inputSpace);
     }
 }

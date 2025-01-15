@@ -1,6 +1,7 @@
 package org.tasks.reservation;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
@@ -50,14 +51,22 @@ public class SpaceManager {
         }
     }
 
-    protected int getValidInputNumber(int inputNumber, int maxNumber) {
+    protected Optional<Integer> askUserToWriteNumberOfSpace() {
+        try {
+            int inputNumber = Integer.parseInt(scanner.nextLine());
+            return Optional.of(inputNumber);
+        } catch (NumberFormatException e) {
+            System.out.println("Input contains letters or is not a valid number.");
+        }
+        return Optional.empty();
+    }
+
+    protected int getValidInputNumber(int maxNumber) {
+        int inputNumber = -1;
         while (inputNumber <= 0 || inputNumber > maxNumber) {
+            Optional<Integer> optionalInput = askUserToWriteNumberOfSpace();
+            inputNumber = optionalInput.orElse(-1);
             System.out.println("Invalid input.Please, check your input data");
-            try {
-                inputNumber = Integer.parseInt(scanner.nextLine());
-            } catch (NumberFormatException e) {
-                System.out.println("Input contains letters or is not a valid number.");
-            }
         }
         return inputNumber;
     }
