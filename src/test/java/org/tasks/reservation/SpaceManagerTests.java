@@ -2,10 +2,17 @@ package org.tasks.reservation;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.Scanner;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class SpaceManagerTests {
@@ -20,16 +27,40 @@ public class SpaceManagerTests {
         manager = new SpaceManager(repository, scannerMock);
     }
 
-    @Test
-    void testGetValidInputNumber() {
+    static Stream<Arguments> provideInputForGetValidInputNumber() {
+        return Stream.of(
+            Arguments.of(new String[]{"abc", "3"}, 5, 3),
+            Arguments.of(new String[]{"-1", "5"}, 5, 5),
+            Arguments.of(new String[]{"3"}, 5, 3),
+            Arguments.of(new String[]{"6", "4"}, 5, 4)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideInputForGetValidInputNumber")
+    void testGetValidInputNumber(String[] inputs, int maxNumber, int expected) {
         //arrange
-        int maxNumber = 5;
-        when(scannerMock.nextLine()).thenReturn("3");
-        when(scannerMock.nextLine()).thenReturn("6");
+        when(scannerMock.nextLine()).thenReturn(inputs[0], Arrays.copyOfRange(inputs, 1, inputs.length));
         //act
-        int inputSpace = manager.getValidInputNumber(maxNumber);
+        int input = manager.getValidInputNumber(maxNumber);
         //assert
-        verify(scannerMock, times(1)).nextLine();
-        assertEquals(3, inputSpace);
+        assertEquals(expected, input);
+        verify(scannerMock, times(inputs.length)).nextLine();
+    }
+
+    @Test
+    void testAskUserToWriteNumberOfSpace() {
+        //arrange
+        when(scannerMock.nextLine())
+            .thenReturn("abc")
+            .thenReturn("3");
+        //act
+        Optional<Integer> input1 = manager.askUserToWriteNumberOfSpace();
+        Optional<Integer> input2 = manager.askUserToWriteNumberOfSpace();
+        //assert
+        assertTrue(input1.isEmpty());
+        assertTrue(input2.isPresent());
+        assertEquals(3, input2.get());
+        verify(scannerMock, times(2)).nextLine();
     }
 }

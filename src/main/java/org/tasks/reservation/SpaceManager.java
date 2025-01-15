@@ -19,14 +19,14 @@ public class SpaceManager {
 
     protected void showSpaces(Predicate<CoworkingSpace> availabilityFilter) {
         List<CoworkingSpace> filteredSpaces = repository.getSpaces().stream()
-                .filter(availabilityFilter)
-                .toList();
+            .filter(availabilityFilter)
+            .toList();
 
         if (filteredSpaces.isEmpty()) {
             System.out.println("Empty list.");
         } else {
             IntStream.range(0, filteredSpaces.size())
-                    .forEach(i -> showSpaceWithNumber(i + 1, filteredSpaces.get(i)));
+                .forEach(i -> showSpaceWithNumber(i + 1, filteredSpaces.get(i)));
         }
     }
 
@@ -43,11 +43,11 @@ public class SpaceManager {
             System.out.println("Empty list.");
         } else {
             IntStream.range(0, myReservations.size())
-                    .forEach(i -> {
-                        System.out.println("\n-------------------------------------------------");
-                        System.out.println((i + 1) + ".\n" + myReservations.get(i));
-                        System.out.println("\n-------------------------------------------------");
-                    });
+                .forEach(i -> {
+                    System.out.println("\n-------------------------------------------------");
+                    System.out.println((i + 1) + ".\n" + myReservations.get(i));
+                    System.out.println("\n-------------------------------------------------");
+                });
         }
     }
 
@@ -66,12 +66,14 @@ public class SpaceManager {
         while (inputNumber <= 0 || inputNumber > maxNumber) {
             Optional<Integer> optionalInput = askUserToWriteNumberOfSpace();
             inputNumber = optionalInput.orElse(-1);
-            System.out.println("Invalid input.Please, check your input data");
+            if (inputNumber <= 0 || inputNumber > maxNumber) {
+                System.out.println("Invalid input. Please, check your input data");
+            }
         }
         return inputNumber;
     }
 
-    protected int getValidChosenSpace(int maxNumber) throws SpaceIsNotFound {
+    protected int getValidChosenSpace(int maxNumber) {
         int inputNumber = -1;
 
         while (inputNumber <= 0 || inputNumber > maxNumber) {
