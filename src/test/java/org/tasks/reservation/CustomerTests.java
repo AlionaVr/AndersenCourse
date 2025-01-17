@@ -25,7 +25,7 @@ public class CustomerTests {
     }
 
     @Test
-    void testReserve() {
+    void givenListOfSpaces_whenReserve_thenSpaceShouldBeNotAvailableAndAddedToMyReservation() {
         // Arrange
         CoworkingSpace space1 = new CoworkingSpace("Space1", "open", 100.0);
         CoworkingSpace space2 = new CoworkingSpace("Space2", "open", 200.0);
@@ -43,7 +43,7 @@ public class CustomerTests {
     }
 
     @Test
-    void testCancelReservation() {
+    void givenSpaceBooked_whenCancelReservation_thenSpaceShouldBeAvailable() {
         //arrange
         CoworkingSpace space1 = new CoworkingSpace("Space1", "open", 100.0);
         CoworkingSpaceBooking booking1 = new CoworkingSpaceBooking(space1, "Meeting at 10 AM");

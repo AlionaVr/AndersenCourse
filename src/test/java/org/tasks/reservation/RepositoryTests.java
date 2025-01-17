@@ -27,7 +27,7 @@ public class RepositoryTests {
     }
 
     @Test
-    void testSaveObject_AndReadFile() {
+    void givenListOfCoworkingSpace_whenSaveObjectAndReadFile_thenRepoContainsSavedList() {
         //arrange
         repository.getSpaces().add(new CoworkingSpace("Space1", "open", 100.0));
         repository.getSpaces().add(new CoworkingSpace("Space2", "private", 200.0));

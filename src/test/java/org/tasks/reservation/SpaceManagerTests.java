@@ -38,7 +38,7 @@ public class SpaceManagerTests {
 
     @ParameterizedTest
     @MethodSource("provideInputForGetValidInputNumber")
-    void testGetValidInputNumber(String[] inputs, int maxNumber, int expected) {
+    void givenInputs_whenGetValidInputNumberIsCalled_thenReturnValidNumber(String[] inputs, int maxNumber, int expected) {
         //arrange
         when(scannerMock.nextLine()).thenReturn(inputs[0], Arrays.copyOfRange(inputs, 1, inputs.length));
         //act
@@ -49,11 +49,11 @@ public class SpaceManagerTests {
     }
 
     @Test
-    void testAskUserToWriteNumberOfSpace() {
+    void givenInvalidAndValidInput_whenAskUserToWriteNumberOfSpace_thenReturnValidInput() {
         //arrange
         when(scannerMock.nextLine())
-            .thenReturn("abc")
-            .thenReturn("3");
+                .thenReturn("abc")
+                .thenReturn("3");
         //act
         Optional<Integer> input1 = manager.askUserToWriteNumberOfSpace();
         Optional<Integer> input2 = manager.askUserToWriteNumberOfSpace();

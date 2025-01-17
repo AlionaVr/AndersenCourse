@@ -32,7 +32,7 @@ public class Admin {
     }
 
     protected void removeSpace(int numberOfSpaceToDelete) {
-        if (repository.getSpaces().size() >= numberOfSpaceToDelete) {
+        if (repository.getSpaces().size() >= numberOfSpaceToDelete && numberOfSpaceToDelete > 0) {
             repository.getSpaces().remove(numberOfSpaceToDelete - 1);
             System.out.println("DELETED!");
         }

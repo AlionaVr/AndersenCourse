@@ -26,7 +26,7 @@ public class AdminTests {
     }
 
     @Test
-    void testRemoveSpace_WhenListIsNotEmpty() {
+    void givenListIsNotEmpty_whenRemoveSpace_thenReturnRightSizeOfRepo() {
         //arrange
         repository.getSpaces().add(new CoworkingSpace("Space1", "open", 100.0));
         repository.getSpaces().add(new CoworkingSpace("Space2", "private", 200.0));
@@ -39,8 +39,8 @@ public class AdminTests {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {1, 5})
-    void testRemoveSpace_WhenListIsEmpty_OrInvalidInput(int numberOfSpaceToDelete) {
+    @ValueSource(ints = {1, -5})
+    void givenListIsEmptyOrInvalidInput_whenRemoveSpace_thenReturnSizeEqualZero(int numberOfSpaceToDelete) {
         //act
         admin.removeSpace(numberOfSpaceToDelete);
         //assert
@@ -48,7 +48,7 @@ public class AdminTests {
     }
 
     @Test
-    void testAddSpace() {
+    void givenEmptyRepo_whenAddSpaces_thenSizeShouldBeChangedAndSpacesShouldBeCorrectlyAdded() {
         //arrange
         CoworkingSpace newSpace = new CoworkingSpace("AddedSpace", "open", 100.0);
         CoworkingSpace newSpace2 = new CoworkingSpace("AddedSpace2", "open", 200.0);
@@ -62,7 +62,7 @@ public class AdminTests {
     }
 
     @Test
-    void testAskUserToWriteCoworkingSpaceString() {
+    void givenValidCoworkingSpace_whenAskUserToWriteCoworkingSpaceString_thenCoworkingSpaceShouldContainCorrectData() {
         when(scannerMock.nextLine()).thenReturn("Space1,private,100.0");
         //act
         Optional<CoworkingSpace> inputSpace = admin.askUserToWriteCoworkingSpaceString();
@@ -71,5 +71,4 @@ public class AdminTests {
         assertTrue(inputSpace.isPresent());
         assertTrue(inputSpace.get().toString().contains("Space1"));
     }
-
 }

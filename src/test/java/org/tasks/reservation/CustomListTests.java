@@ -2,6 +2,8 @@ package org.tasks.reservation;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Iterator;
 
@@ -16,7 +18,7 @@ public class CustomListTests {
     }
 
     @Test
-    void testAdd() {
+    void givenElementsAndEmptyList_whenAdd_thenListContainsElements() {
         //arrange
         String element1 = "Element1";
         String element2 = "Element2";
@@ -32,7 +34,7 @@ public class CustomListTests {
     }
 
     @Test
-    void testAddAll() {
+    void givenElementsAndEmptyList_whenAddAll_thenListContainsAllElements() {
         //act
         list.addAll("element1", "element2", "element3", "element4");
 
@@ -43,32 +45,45 @@ public class CustomListTests {
     }
 
     @Test
-    void testCheckIndexAndGetElement() {
+    void givenElementsInList_whenGetElement_thenReturnRightElement() {
         //arrange
         list.addAll("element1", "element2", "element3", "element4");
-
         //act and assert
         assertEquals("element2", list.get(1));
         assertEquals("element3", list.get(2));
-        assertThrows(IndexOutOfBoundsException.class, () -> list.get(4));
-        assertThrows(IndexOutOfBoundsException.class, () -> list.get(-4));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {-4, 4})
+    void givenElementsInList_whenGetElementByInvalidIndex_thenReturnException(int invalidIndex) {
+        //arrange
+        list.addAll("element1", "element2", "element3", "element4");
+        //act and assert
+        assertThrows(IndexOutOfBoundsException.class, () -> list.get(invalidIndex));
     }
 
     @Test
-    void testRemove_InvalidIndex() {
+    void givenElementsInList_whenRemoveByIndex_thenSizeDecreasesAndReturnCorrectElements() {
         // arrange
         list.addAll("element1", "element2", "element3", "element4");
         // act
         list.remove(2);
-        // act and assert
+        // assert
         assertEquals(3, list.size());
         assertEquals("element4", list.get(2));
-        assertThrows(IndexOutOfBoundsException.class, () -> list.remove(-1));
-        assertThrows(IndexOutOfBoundsException.class, () -> list.remove(3));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {-1, 4})
+    void givenElementsInList_whenRemoveByInvalidIndex_thenSReturnException(int invalidIndex) {
+        // arrange
+        list.addAll("element1", "element2", "element3", "element4");
+        // act and assert
+        assertThrows(IndexOutOfBoundsException.class, () -> list.remove(invalidIndex));
     }
 
     @Test
-    void testIterator() {
+    void givenElementsInList_whenIteratorIsUsed_thenIteratesOverAllElements() {
         // arrange
         list.addAll("element1", "element2");
         // act
