@@ -1,33 +1,33 @@
 package org.tasks.reservation;
 
-import java.io.File;
 import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class Main {
     private final static Repository repository = new Repository();
+    public static Connection postgresDbConnection;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException, ClassNotFoundException {
         Main main = new Main();
 
-        File file = new File("save.txt");
-        if (file.exists()) {
-            repository.readFile();
-        } else {
-            System.out.println("No saved file found, starting with an empty repository.");
+        try (Connection connection = getDatabaseConnection()) {
+            postgresDbConnection = connection;
+            main.tryToLoadMenu();
         }
-        /*
-        try (FileInputStream fis= new FileInputStream("save.txt")) {
-            repository.readFile();
-            System.out.println("data are restored\n");
-        } catch (FileNotFoundException e) {
-            System.out.println("No saved file found, starting with an empty repository.");
-        } catch (IOException e) {
-            System.out.println("An error occurred while reading the file: " + e.getMessage());
-        }*/
+    }
 
-        main.tryToLoadMenu();
+    private static Connection getDatabaseConnection() throws SQLException, ClassNotFoundException {
+        String jdbcUrl = "jdbc:postgresql://localhost:5432/postgres";
+        String username = "postgres";
+        String password = "dbpassword";
 
-        repository.saveObject();
+        Class.forName("org.postgresql.Driver");
+
+        postgresDbConnection = DriverManager.getConnection(jdbcUrl, username, password);
+        System.out.println("Connected to database successfully!");
+        return postgresDbConnection;
     }
 
     protected void tryToLoadMenu() {
@@ -41,6 +41,7 @@ public class Main {
             method.invoke(instance);
         } catch (Exception e) {
             System.out.println("Something went wrong " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

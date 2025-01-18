@@ -1,46 +1,63 @@
 package org.tasks.reservation;
 
-import java.io.*;
+import java.io.Serializable;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class Repository implements Serializable {
-    private CustomList<CoworkingSpace> spaces = new CustomList<>();
-    private CustomList<CoworkingSpaceBooking> myReservations = new CustomList<>();
-
-    public Repository() {
-    }
-
     public CustomList<CoworkingSpace> getSpaces() {
-        return spaces; // never null!
+        CustomList<CoworkingSpace> spaces = new CustomList<>();
+        String query = "SELECT * FROM coworkingSpace";
+        try (Statement statement = Main.postgresDbConnection.createStatement();
+             ResultSet resultSet = statement.executeQuery(query)) {
+
+            while (resultSet.next()) {
+                spaces.add(new CoworkingSpace(
+                        resultSet.getInt("id"),
+                        resultSet.getString("name"),
+                        resultSet.getString("type"),
+                        resultSet.getDouble("price"),
+                        resultSet.getBoolean("availability")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return spaces;
     }
 
     public CustomList<CoworkingSpaceBooking> getMyReservations() {
+        CustomList<CoworkingSpaceBooking> myReservations = new CustomList<>();
+        String query = """
+                SELECT coworkingSpaceBooking.coworking_space_id,
+                coworkingSpaceBooking.booking_date,
+                       coworkingSpace.name,
+                       coworkingSpace.type,
+                       coworkingSpace.price,
+                       coworkingSpace.availability,
+                   coworkingSpaceBooking.booking_details
+                FROM coworkingSpaceBooking
+                JOIN coworkingSpace ON coworkingSpaceBooking.coworking_space_id = coworkingSpace.id;
+                """;
+        try (Statement statement = Main.postgresDbConnection.createStatement();
+             ResultSet resultSet = statement.executeQuery(query)) {
+            while (resultSet.next()) {
+                CoworkingSpace coworkingSpace = new CoworkingSpace(
+                        resultSet.getInt("coworking_space_id"),
+                        resultSet.getString("name"),
+                        resultSet.getString("type"),
+                        resultSet.getDouble("price"),
+                        resultSet.getBoolean("availability")
+                );
+                CoworkingSpaceBooking booking = new CoworkingSpaceBooking(
+                        coworkingSpace,
+                        resultSet.getString("booking_details")
+                );
+                myReservations.add(booking);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return myReservations;
-    }
-
-    //Serialization
-    protected void saveObject() {
-        try (FileOutputStream fos = new FileOutputStream("save.txt");
-             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-
-            oos.writeObject(this);
-            System.out.println("Object has been serialized");
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
-    }
-
-    //Deserialization
-    protected void readFile() {
-        try (FileInputStream fis = new FileInputStream("save.txt");
-             ObjectInputStream ois = new ObjectInputStream(fis)) {
-
-            Repository loadedRepository = (Repository) ois.readObject();
-
-            this.spaces = loadedRepository.getSpaces();
-            this.myReservations = loadedRepository.getMyReservations();
-
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
     }
 }

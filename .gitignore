@@ -36,3 +36,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+/gradle/wrapper/
+/gradlew
+/gradlew.bat

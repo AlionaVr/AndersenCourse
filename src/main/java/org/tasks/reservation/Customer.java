@@ -14,22 +14,19 @@ public class Customer {
         this.manager = manager;
     }
 
-    protected void reserve(int numberChosenSpace) {
-
-        CoworkingSpace coworkingSpaceToBeBooked = repository.getSpaces().get(numberChosenSpace - 1);
+    protected void reserve(int id) {
 
         System.out.println("Please, enter booking details: ");
         String bookingDetails = scanner.nextLine().trim();
 
-        CoworkingSpaceBooking coworkingSpaceBooking = new CoworkingSpaceBooking(coworkingSpaceToBeBooked, bookingDetails);
-        coworkingSpaceToBeBooked.setAvailability(false);
-        manager.addSpaceToMyReservation(coworkingSpaceBooking);
+        manager.changeSpaceAvailability(false, id);
+        manager.addSpaceToMyReservation(id, bookingDetails);
         System.out.println("RESERVED!");
     }
 
-    protected void cancelReservation(int numberChosenSpace) {
-        CoworkingSpaceBooking canceledSpaceBooking = manager.removeSpaceFromMyReservation(numberChosenSpace - 1);
-        canceledSpaceBooking.getCoworkingSpace().setAvailability(true);
+    protected void cancelReservation(int id) {
+        manager.removeSpaceFromMyReservation(id);
+        manager.changeSpaceAvailability(true, id);
         System.out.println("CANCELED!");
     }
 }

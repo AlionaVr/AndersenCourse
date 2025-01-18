@@ -19,4 +19,8 @@ public class CoworkingSpaceBooking implements Serializable {
     public String toString() {
         return String.format("%s\nBooking details: %s", coworkingSpace.toString(), bookingDetails);
     }
+
+    public String getBookingDetails() {
+        return bookingDetails;
+    }
 }
