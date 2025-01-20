@@ -31,9 +31,7 @@ public class Admin {
 
     protected void addSpace(CoworkingSpace newSpace) {
         String query = "INSERT INTO coworkingSpace (name, type, price) VALUES (?, ?, ?)";
-        try {
-            PreparedStatement preparedStatement = Main.postgresDbConnection.prepareStatement(query);
-
+        try (PreparedStatement preparedStatement = Main.postgresDbConnection.prepareStatement(query)) {
             preparedStatement.setString(1, newSpace.getName());
             preparedStatement.setString(2, newSpace.getType());
             preparedStatement.setDouble(3, newSpace.getPrice());

@@ -15,7 +15,7 @@ public class MenuLauncher {
         this.scanner = new Scanner(System.in);
         this.manager = new SpaceManager(repository, scanner);
         this.admin = new Admin(repository, scanner);
-        this.customer = new Customer(repository, scanner, manager);
+        this.customer = new Customer(scanner, manager);
         this.repository = repository;
     }
 

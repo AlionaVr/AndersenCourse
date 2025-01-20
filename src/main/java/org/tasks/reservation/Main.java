@@ -1,9 +1,13 @@
 package org.tasks.reservation;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Optional;
+import java.util.Properties;
 
 public class Main {
     private final static Repository repository = new Repository();
@@ -19,9 +23,9 @@ public class Main {
     }
 
     private static Connection getDatabaseConnection() throws SQLException, ClassNotFoundException {
-        String jdbcUrl = "jdbc:postgresql://localhost:5432/postgres";
-        String username = "postgres";
-        String password = "dbpassword";
+        String jdbcUrl = getPropertyValue("jdbcUrl");
+        String username = getPropertyValue("username");
+        String password = getPropertyValue("password");
 
         Class.forName("org.postgresql.Driver");
 
@@ -30,9 +34,21 @@ public class Main {
         return postgresDbConnection;
     }
 
-    protected void tryToLoadMenu() {
+    private static String getPropertyValue(String propertyKey) {
+        Properties properties = new Properties();
+
+        try (FileInputStream fis = new FileInputStream("src\\main\\resources\\database.property")) {
+            properties.load(fis);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return Optional.ofNullable(properties.getProperty(propertyKey))
+                .orElseThrow(() -> new IllegalArgumentException("Property not found for key: " + propertyKey));
+    }
+
+    private void tryToLoadMenu() {
         try {
-            String directoryPath = "D:\\Projects\\AndersenCourse\\target\\classes\\";
+            String directoryPath = "target\\classes\\";
             CustomClassLoader classLoader = new CustomClassLoader(directoryPath);
             String className = "org.tasks.reservation.MenuLauncher";
             Class<?> loadedClass = classLoader.loadClass(className);

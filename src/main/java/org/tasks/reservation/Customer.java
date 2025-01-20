@@ -6,10 +6,10 @@ import java.util.Scanner;
 public class Customer {
     private final SpaceManager manager;
     private final Scanner scanner;
-    private final Repository repository;
 
-    public Customer(Repository repository, Scanner scanner, SpaceManager manager) {
-        this.repository = repository;
+
+    public Customer(Scanner scanner, SpaceManager manager) {
+
         this.scanner = scanner;
         this.manager = manager;
     }
