@@ -1,38 +1,54 @@
 package org.tasks.reservation;
 
-import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Optional;
+import java.util.Properties;
 
 public class Main {
     private final static Repository repository = new Repository();
+    public static Connection postgresDbConnection;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException, ClassNotFoundException {
         Main main = new Main();
 
-        File file = new File("save.txt");
-        if (file.exists()) {
-            repository.readFile();
-        } else {
-            System.out.println("No saved file found, starting with an empty repository.");
+        try (Connection connection = getDatabaseConnection()) {
+            postgresDbConnection = connection;
+            main.tryToLoadMenu();
         }
-        /*
-        try (FileInputStream fis= new FileInputStream("save.txt")) {
-            repository.readFile();
-            System.out.println("data are restored\n");
-        } catch (FileNotFoundException e) {
-            System.out.println("No saved file found, starting with an empty repository.");
-        } catch (IOException e) {
-            System.out.println("An error occurred while reading the file: " + e.getMessage());
-        }*/
-
-        main.tryToLoadMenu();
-
-        repository.saveObject();
     }
 
-    protected void tryToLoadMenu() {
+    private static Connection getDatabaseConnection() throws SQLException, ClassNotFoundException {
+        String jdbcUrl = getPropertyValue("jdbcUrl");
+        String username = getPropertyValue("username");
+        String password = getPropertyValue("password");
+
+        Class.forName("org.postgresql.Driver");
+
+        postgresDbConnection = DriverManager.getConnection(jdbcUrl, username, password);
+        System.out.println("Connected to database successfully!");
+        return postgresDbConnection;
+    }
+
+    private static String getPropertyValue(String propertyKey) {
+        Properties properties = new Properties();
+
+        try (FileInputStream fis = new FileInputStream("src\\main\\resources\\database.property")) {
+            properties.load(fis);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return Optional.ofNullable(properties.getProperty(propertyKey))
+                .orElseThrow(() -> new IllegalArgumentException("Property not found for key: " + propertyKey));
+    }
+
+    private void tryToLoadMenu() {
         try {
-            String directoryPath = "D:\\Projects\\AndersenCourse\\target\\classes\\";
+            String directoryPath = "target\\classes\\";
             CustomClassLoader classLoader = new CustomClassLoader(directoryPath);
             String className = "org.tasks.reservation.MenuLauncher";
             Class<?> loadedClass = classLoader.loadClass(className);
@@ -41,6 +57,7 @@ public class Main {
             method.invoke(instance);
         } catch (Exception e) {
             System.out.println("Something went wrong " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

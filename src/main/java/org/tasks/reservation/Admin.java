@@ -1,75 +1,89 @@
 package org.tasks.reservation;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Optional;
 import java.util.Scanner;
 
 public class Admin {
 
-    private final Scanner scanner = new Scanner(System.in);
-    private final SpaceManager manager;
+    private final Scanner scanner;
     private final Repository repository;
 
-    public Admin(Repository repository) {
+    public Admin(Repository repository, Scanner scanner) {
+        this.scanner = scanner;
         this.repository = repository;
-        this.manager = new SpaceManager(repository);
     }
 
-    protected void addSpace() {
+    protected Optional<CoworkingSpace> askUserToWriteCoworkingSpaceString() {
         System.out.println("Enter name of space, type and price: \n ***in format: Name,type,price ");
-        String input = scanner.nextLine();
-        Optional.of(input.split(","))
-                .filter(elements -> elements.length == 3)
-                .ifPresentOrElse(
-                        elements -> {// if condition is true
-                            try {
-                                String name = elements[0];
-                                String type = elements[1];
-                                double price = Double.parseDouble(elements[2]);
-                                CoworkingSpace newSpace = new CoworkingSpace(name, type, price);
-
-                                repository.getSpaces().add(newSpace);
-
-                                System.out.println("Space added successfully! That's all spaces:");
-                                manager.showSpaces(space -> true);
-
-                            } catch (NumberFormatException e) {
-                                System.out.println("Invalid price format. Please, enter a valid number for price.");
-                            }
-                        },
-                        () -> { // if condition is false
-                            System.out.println("Invalid input. Please enter data in format: Name,type,price");
-                        }
-                );
-
+        try {
+            String spaceStringSeparatedByComma = scanner.nextLine();
+            return Optional.of(spaceStringSeparatedByComma.split(","))
+                    .filter(elements -> elements.length == 3)
+                    .map(elements -> new CoworkingSpace(elements[0], elements[1], Double.parseDouble(elements[2])));
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid price format. Please, enter a valid number for price.");
+        }
+        return Optional.empty();
     }
 
-    protected void removeSpace() {
-        manager.showSpaces(space -> true);
-        Optional.of(repository.getSpaces())
-                .filter(CustomList::isNotEmpty)
-                .ifPresent(spaces -> {
-                    System.out.println("Please, choose the number of space, that you would like to delete.");
-                    int numberOfSpace = manager.getValidChosenSpace(spaces.size());
-                    spaces.remove(numberOfSpace - 1);
-                    System.out.println("DELETED!");
-                });
+    protected void addSpace(CoworkingSpace newSpace) {
+        String query = "INSERT INTO coworkingSpace (name, type, price) VALUES (?, ?, ?)";
+        try (PreparedStatement preparedStatement = Main.postgresDbConnection.prepareStatement(query)) {
+            preparedStatement.setString(1, newSpace.getName());
+            preparedStatement.setString(2, newSpace.getType());
+            preparedStatement.setDouble(3, newSpace.getPrice());
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    protected void updateSpace() {
-        manager.showSpaces(space -> true);
+    protected void removeSpace(int id) {
+        String deleteQuery = "DELETE FROM coworkingSpace WHERE id = ?";
+        try (PreparedStatement preparedStatement = Main.postgresDbConnection.prepareStatement(deleteQuery)) {
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+            System.out.println("DELETED!");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
-        Optional.of(repository.getSpaces())
-                .filter(CustomList::isNotEmpty)
-                .ifPresent(spaces -> {
-                    System.out.println("Please, choose the number of space, that you would like to update.");
-                    int numberOfSpace = manager.getValidChosenSpace(spaces.size());
-                    spaces.remove(numberOfSpace - 1);
-                    addSpace();
-                    System.out.println("UPDATED!");
-                });
+    protected void updateSpace(int idToUpdate) {
+        String selectQuery = "SELECT * FROM coworkingSpace WHERE id = ?";
+        try (PreparedStatement preparedStatement = Main.postgresDbConnection.prepareStatement(selectQuery)) {
+            preparedStatement.setInt(1, idToUpdate);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (!resultSet.next()) {
+                System.out.println("No space found with the specified ID: " + idToUpdate);
+            }
+            String updateQuery = "UPDATE coworkingSpace SET name = ?, type = ?, price = ?, availability = ? WHERE id = ?";
+            try (PreparedStatement updateStatement = Main.postgresDbConnection.prepareStatement(updateQuery)) {
+                Optional<CoworkingSpace> coworkingSpace = askUserToWriteCoworkingSpaceString();
+                while (coworkingSpace.isEmpty()) {
+                    System.out.println("Invalid input. Please enter data in format: Name,type,price");
+                    coworkingSpace = askUserToWriteCoworkingSpaceString();
+                }
+                CoworkingSpace space = coworkingSpace.get();
+
+                updateStatement.setString(1, space.getName());
+                updateStatement.setString(2, space.getType());
+                updateStatement.setDouble(3, space.getPrice());
+                updateStatement.setBoolean(4, space.isAvailable());
+                updateStatement.setInt(5, idToUpdate);
+                updateStatement.executeUpdate();
+
+                System.out.println("UPDATED!");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
-
 
 
 

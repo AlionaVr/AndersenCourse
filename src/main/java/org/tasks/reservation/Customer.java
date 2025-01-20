@@ -5,49 +5,28 @@ import java.util.Scanner;
 
 public class Customer {
     private final SpaceManager manager;
-    private final Scanner scanner = new Scanner(System.in);
-    private final Repository repository;
+    private final Scanner scanner;
 
-    public Customer(Repository repository) {
-        this.repository = repository;
-        this.manager = new SpaceManager(repository);
+
+    public Customer(Scanner scanner, SpaceManager manager) {
+
+        this.scanner = scanner;
+        this.manager = manager;
     }
 
-    protected void reserve() {
-        manager.showSpaces(CoworkingSpace::isAvailable);
-        if (repository.getSpaces().isNotEmpty()) {
-            System.out.println("Choose one available coworking spaces");
+    protected void reserve(int id) {
 
-            int numberChosenSpace = manager.getValidChosenSpace(repository.getSpaces().size());
+        System.out.println("Please, enter booking details: ");
+        String bookingDetails = scanner.nextLine().trim();
 
-            CoworkingSpace coworkingSpaceToBeBooked = repository.getSpaces().get(numberChosenSpace - 1);
-
-            System.out.println("Please, enter booking details: ");
-            String bookingDetails = scanner.nextLine().trim();
-
-            CoworkingSpaceBooking coworkingSpaceBooking = new CoworkingSpaceBooking(coworkingSpaceToBeBooked, bookingDetails);
-
-            coworkingSpaceToBeBooked.setAvailability(false);
-
-            manager.addSpaceToMyReservation(coworkingSpaceBooking);
-
-            System.out.println("RESERVED!");
-        }
-
+        manager.changeSpaceAvailability(false, id);
+        manager.addSpaceToMyReservation(id, bookingDetails);
+        System.out.println("RESERVED!");
     }
 
-    protected void cancelReservation() {
-        System.out.println("It's list of your reservations: ");
-        manager.showMyReservation();
-        if (repository.getMyReservations().isNotEmpty()) {
-            System.out.println("Choose the number of space, that you would like to cancel. ");
-
-            int numberChosenSpace = manager.getValidChosenSpace(repository.getMyReservations().size());
-
-            CoworkingSpaceBooking canceledSpaceBooking = manager.removeSpaceFromMyReservation(numberChosenSpace - 1);
-            canceledSpaceBooking.getCoworkingSpace().setAvailability(true);
-
-            System.out.println("CANCELED!");
-        }
+    protected void cancelReservation(int id) {
+        manager.removeSpaceFromMyReservation(id);
+        manager.changeSpaceAvailability(true, id);
+        System.out.println("CANCELED!");
     }
 }

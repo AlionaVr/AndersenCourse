@@ -1,11 +1,12 @@
 package org.tasks.reservation;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
 
-public class CustomList<T> implements Iterable<T> {
+public class CustomList<T> implements Iterable<T>, Serializable {
     private T[] data;
     private int size;
     private int capacity;
@@ -20,11 +21,20 @@ public class CustomList<T> implements Iterable<T> {
     }
 
     // check the need of resizing and add element at the end
-    public void add(T element) {
+    protected void add(T element) {
         if (size == capacity) {
             resize();
         }
         data[size++] = element;
+    }
+
+    @SafeVarargs
+    //the method contains a variable number of arguments (varargs).
+    //In some cases, a warning may be issued when compiling a method with varargs.
+    protected final void addAll(T... elements) {
+        for (T element : elements) {
+            add(element);
+        }
     }
 
     private void resize() {
@@ -32,7 +42,7 @@ public class CustomList<T> implements Iterable<T> {
         data = Arrays.copyOf(data, capacity);
     }
 
-    public T get(int index) {
+    protected T get(int index) {
         checkIndex(index);
         return data[index];
     }
@@ -53,11 +63,11 @@ public class CustomList<T> implements Iterable<T> {
         return removedElement;
     }
 
-    public int size() {
+    protected int size() {
         return size;
     }
 
-    public boolean isNotEmpty() {
+    protected boolean isNotEmpty() {
         return size > 0;
     }
 
@@ -78,7 +88,7 @@ public class CustomList<T> implements Iterable<T> {
         };
     }
 
-    public Stream<T> stream() {
+    protected Stream<T> stream() {
         return Arrays.stream(data, 0, size);
     }
 
