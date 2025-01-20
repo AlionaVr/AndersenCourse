@@ -1,10 +1,11 @@
 package org.tasks.reservation;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.function.Predicate;
-import java.util.stream.IntStream;
 
 
 public class SpaceManager {
@@ -19,21 +20,16 @@ public class SpaceManager {
 
     protected void showSpaces(Predicate<CoworkingSpace> availabilityFilter) {
         List<CoworkingSpace> filteredSpaces = repository.getSpaces().stream()
-            .filter(availabilityFilter)
-            .toList();
+                .filter(availabilityFilter)
+                .toList();
 
         if (filteredSpaces.isEmpty()) {
             System.out.println("Empty list.");
-        } else {
-            IntStream.range(0, filteredSpaces.size())
-                .forEach(i -> showSpaceWithNumber(i + 1, filteredSpaces.get(i)));
-        }
-    }
-
-    protected void showSpaceWithNumber(int counter, CoworkingSpace space) {
-        System.out.println("\n-------------------------------------------------");
-        System.out.printf("%d.\n%s", counter, space.toString());
-        System.out.println("\n-------------------------------------------------");
+        } else filteredSpaces.forEach(space -> {
+            System.out.println("\n-------------------------------------------------");
+            System.out.println(space.toString());
+            System.out.println("-------------------------------------------------");
+        });
     }
 
     protected void showMyReservation() {
@@ -41,14 +37,11 @@ public class SpaceManager {
 
         if (myReservations.isEmpty()) {
             System.out.println("Empty list.");
-        } else {
-            IntStream.range(0, myReservations.size())
-                .forEach(i -> {
-                    System.out.println("\n-------------------------------------------------");
-                    System.out.println((i + 1) + ".\n" + myReservations.get(i));
-                    System.out.println("\n-------------------------------------------------");
-                });
-        }
+        } else myReservations.forEach(space -> {
+            System.out.println("\n-------------------------------------------------");
+            System.out.println(space.toString());
+            System.out.println("-------------------------------------------------");
+        });
     }
 
     protected Optional<Integer> askUserToWriteNumberOfSpace() {
@@ -61,45 +54,41 @@ public class SpaceManager {
         return Optional.empty();
     }
 
-    protected int getValidInputNumber(int maxNumber) {
-        int inputNumber = -1;
-        while (inputNumber <= 0 || inputNumber > maxNumber) {
-            Optional<Integer> optionalInput = askUserToWriteNumberOfSpace();
-            inputNumber = optionalInput.orElse(-1);
-            if (inputNumber <= 0 || inputNumber > maxNumber) {
-                System.out.println("Invalid input. Please, check your input data");
-            }
+    protected void changeSpaceAvailability(boolean availability, int id) {
+        String updateQuery = "UPDATE coworkingSpace SET availability = ? WHERE id = ?";
+        try (PreparedStatement preparedStatement = Main.postgresDbConnection.prepareStatement(updateQuery)) {
+            preparedStatement.setBoolean(1, availability);
+            preparedStatement.setInt(2, id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return inputNumber;
     }
 
-    protected int getValidChosenSpace(int maxNumber) {
-        int inputNumber = -1;
-
-        while (inputNumber <= 0 || inputNumber > maxNumber) {
-            try {
-                System.out.println("Please, enter a number:");
-                inputNumber = Integer.parseInt(scanner.nextLine());
-
-                if (inputNumber <= 0 || inputNumber > maxNumber) {
-                    throw new SpaceIsNotFound("This space is not found. Please check your input data");
-                }
-            } catch (SpaceIsNotFound e) {
-                System.out.println(e.getMessage());
-            } catch (NumberFormatException e) {
-                System.out.println("Input contains letters or is not a valid number.");
-            }
+    protected void addSpaceToMyReservation(int id, String bookingDetails) {
+        String insertQuery = "INSERT INTO coworkingSpaceBooking (coworking_space_id, booking_details, booking_date) VALUES (?, ?, NOW())";
+        try (PreparedStatement preparedStatement = Main.postgresDbConnection.prepareStatement(insertQuery)) {
+            preparedStatement.setInt(1, id);
+            preparedStatement.setString(2, bookingDetails);
+            preparedStatement.executeUpdate();
+            System.out.println("Booking successfully added to database.");
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-
-        return inputNumber;
     }
 
+    protected void removeSpaceFromMyReservation(int id) {
+        String deleteQuery = "DELETE FROM coworkingSpaceBooking WHERE id = ?";
 
-    protected void addSpaceToMyReservation(CoworkingSpaceBooking coworkingSpaceBooking) {
-        repository.getMyReservations().add(coworkingSpaceBooking);
-    }
-
-    protected CoworkingSpaceBooking removeSpaceFromMyReservation(int index) {
-        return repository.getMyReservations().remove(index);
+        try (PreparedStatement preparedStatement = Main.postgresDbConnection.prepareStatement(deleteQuery)) {
+            preparedStatement.setInt(1, id);
+            if (preparedStatement.executeUpdate() > 0) {
+                System.out.println("Booking successfully removed from database.");
+            } else {
+                System.out.println("No booking found with the specified ID.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

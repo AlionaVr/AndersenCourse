@@ -6,30 +6,27 @@ import java.util.Scanner;
 public class Customer {
     private final SpaceManager manager;
     private final Scanner scanner;
-    private final Repository repository;
 
-    public Customer(Repository repository, Scanner scanner, SpaceManager manager) {
-        this.repository = repository;
+
+    public Customer(Scanner scanner, SpaceManager manager) {
+
         this.scanner = scanner;
         this.manager = manager;
     }
 
-    protected void reserve(int numberChosenSpace) {
-
-        CoworkingSpace coworkingSpaceToBeBooked = repository.getSpaces().get(numberChosenSpace - 1);
+    protected void reserve(int id) {
 
         System.out.println("Please, enter booking details: ");
         String bookingDetails = scanner.nextLine().trim();
 
-        CoworkingSpaceBooking coworkingSpaceBooking = new CoworkingSpaceBooking(coworkingSpaceToBeBooked, bookingDetails);
-        coworkingSpaceToBeBooked.setAvailability(false);
-        manager.addSpaceToMyReservation(coworkingSpaceBooking);
+        manager.changeSpaceAvailability(false, id);
+        manager.addSpaceToMyReservation(id, bookingDetails);
         System.out.println("RESERVED!");
     }
 
-    protected void cancelReservation(int numberChosenSpace) {
-        CoworkingSpaceBooking canceledSpaceBooking = manager.removeSpaceFromMyReservation(numberChosenSpace - 1);
-        canceledSpaceBooking.getCoworkingSpace().setAvailability(true);
+    protected void cancelReservation(int id) {
+        manager.removeSpaceFromMyReservation(id);
+        manager.changeSpaceAvailability(true, id);
         System.out.println("CANCELED!");
     }
 }
