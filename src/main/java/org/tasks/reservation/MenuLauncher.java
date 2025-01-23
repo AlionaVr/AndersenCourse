@@ -125,24 +125,29 @@ public class MenuLauncher {
     }
 
     private void showAndReserveSpace() {
-        if (!repository.getSpaces().isEmpty()) {
-            System.out.println("Choose id of one available coworking spaces");
-            manager.showSpaces(CoworkingSpace::isAvailable);
-            int chosenSpaceID = getChosenSpaceID();
-            System.out.println("Please, enter booking details: ");
-            String bookingDetails = scanner.nextLine().trim();
-            customer.reserve(chosenSpaceID, bookingDetails);
-        } else System.out.println("Sorry, no available spaces");
+        if (repository.getSpaces().isEmpty()) {
+            System.out.println("Sorry, no available spaces");
+            return;
+        }
+
+        System.out.println("Choose id of one available coworking spaces");
+        manager.showSpaces(CoworkingSpace::isAvailable);
+        int chosenSpaceID = getChosenSpaceID();
+        System.out.println("Please, enter booking details: ");
+        String bookingDetails = scanner.nextLine().trim();
+        customer.reserve(chosenSpaceID, bookingDetails);
     }
 
     private void showAndCancelReservation() {
-        if (!repository.getMyReservations().isEmpty()) {
-            System.out.println("Choose the number of space, that you would like to cancel. ");
-            System.out.println("It's list of your reservations: ");
-            manager.showMyReservation();
-            int chosenSpaceID = getChosenSpaceID();
-            customer.cancelReservation(chosenSpaceID);
-        } else System.out.println("Sorry, your list is Empty ");
+        if (repository.getMyReservations().isEmpty()) {
+            System.out.println("Sorry, your list is Empty ");
+            return;
+        }
+        System.out.println("Choose the number of space, that you would like to cancel. ");
+        System.out.println("It's list of your reservations: ");
+        manager.showMyReservation();
+        int chosenSpaceID = getChosenSpaceID();
+        customer.cancelReservation(chosenSpaceID);
     }
 
     private void exitProgram() {

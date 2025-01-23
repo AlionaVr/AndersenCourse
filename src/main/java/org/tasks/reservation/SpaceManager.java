@@ -1,5 +1,6 @@
 package org.tasks.reservation;
 
+import jakarta.persistence.EntityManager;
 import org.tasks.reservation.entities.CoworkingSpace;
 import org.tasks.reservation.entities.CoworkingSpaceBooking;
 
@@ -54,4 +55,11 @@ public class SpaceManager {
         return Optional.empty();
     }
 
+    protected boolean isSpaceExist(CoworkingSpace space, EntityManager entityManager) {
+        if (space == null) {
+            System.out.println("Space is not found");
+            entityManager.getTransaction().rollback();
+            return false;
+        } else return true;
+    }
 }

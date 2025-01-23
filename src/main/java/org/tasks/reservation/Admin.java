@@ -9,6 +9,9 @@ import java.util.Scanner;
 public class Admin {
 
     private final Scanner scanner;
+    ExecutorEntityManager executorEntityManager = new ExecutorEntityManager();
+
+    SpaceManager manager;
 
     public Admin(Scanner scanner) {
         this.scanner = scanner;
@@ -32,60 +35,48 @@ public class Admin {
     }
 
     protected void addSpace(CoworkingSpace newSpace) {
-        try (EntityManager entityManager = Main.getSessionFactory().createEntityManager()) {
-            entityManager.getTransaction().begin();
-            entityManager.persist(newSpace);
-            entityManager.getTransaction().commit();
-            System.out.println("Coworking space added successfully!");
-        } catch (Exception e) {
-            System.err.println("Error adding coworking space: " + e.getMessage());
-            e.printStackTrace();
-        }
+        executorEntityManager.executeWithEntityManager(
+                entityManager -> entityManager.persist(newSpace),
+                "Coworking space added successfully!",
+                "Error adding coworking space: ");
+
     }
 
     protected void removeSpace(int id) {
-        try (EntityManager entityManager = Main.getSessionFactory().createEntityManager()) {
-            entityManager.getTransaction().begin();
-            CoworkingSpace spaceToDelete = entityManager.find(CoworkingSpace.class, id);
-            if (spaceToDelete == null) {
-                System.out.println("No space found with ID: " + id);
-                entityManager.getTransaction().rollback();
-            } else entityManager.remove(spaceToDelete);
-            System.out.println("DELETED!");
-            entityManager.getTransaction().commit();
-        } catch (Exception e) {
-            System.err.println("Error deleting coworking space: " + e.getMessage());
-            e.printStackTrace();
-        }
+        executorEntityManager.executeWithEntityManager(
+                entityManager -> findAndRemoveSpace(id, entityManager),
+                "DELETED!",
+                "Error deleting coworking space: ");
+    }
+
+    private void findAndRemoveSpace(int id, EntityManager entityManager) {
+        CoworkingSpace spaceToDelete = entityManager.find(CoworkingSpace.class, id);
+        if (manager.isSpaceExist(spaceToDelete, entityManager))
+            entityManager.remove(spaceToDelete);
     }
 
     protected void updateSpace(int idToUpdate) {
+        executorEntityManager.executeWithEntityManager(
+                entityManager -> updateCoworkingSpaceBasedOnUserInput(idToUpdate, entityManager),
+                "UPDATED!",
+                "Error updating coworking space: "
+        );
+    }
 
-        try (EntityManager entityManager = Main.getSessionFactory().createEntityManager()) {
-            entityManager.getTransaction().begin();
-            CoworkingSpace spaceToUpdate = entityManager.find(CoworkingSpace.class, idToUpdate);
-            if (spaceToUpdate == null) {
-                System.out.println("No space found with ID: " + idToUpdate);
-                entityManager.getTransaction().rollback();
-            } else {
-                Optional<CoworkingSpace> coworkingSpace = askUserToWriteCoworkingSpaceString();
-                while (coworkingSpace.isEmpty()) {
-                    System.out.println("Invalid input. Please enter data in format: Name,type,price");
-                    coworkingSpace = askUserToWriteCoworkingSpaceString();
-                }
-                CoworkingSpace newSpaceData = coworkingSpace.get();
-
-                spaceToUpdate.setName(newSpaceData.getName());
-                spaceToUpdate.setType(newSpaceData.getType());
-                spaceToUpdate.setPrice(newSpaceData.getPrice());
-                spaceToUpdate.setAvailability(newSpaceData.isAvailable());
-
-                entityManager.getTransaction().commit();
-                System.out.println("UPDATED!");
+    private void updateCoworkingSpaceBasedOnUserInput(int idToUpdate, EntityManager entityManager) {
+        CoworkingSpace spaceToUpdate = entityManager.find(CoworkingSpace.class, idToUpdate);
+        if (manager.isSpaceExist(spaceToUpdate, entityManager)) {
+            Optional<CoworkingSpace> coworkingSpace = askUserToWriteCoworkingSpaceString();
+            while (coworkingSpace.isEmpty()) {
+                System.out.println("Invalid input. Please enter data in format: Name,type,price");
+                coworkingSpace = askUserToWriteCoworkingSpaceString();
             }
-        } catch (Exception e) {
-            System.err.println("Error updating coworking space: " + e.getMessage());
-            e.printStackTrace();
+            CoworkingSpace newSpaceData = coworkingSpace.get();
+
+            spaceToUpdate.setName(newSpaceData.getName());
+            spaceToUpdate.setType(newSpaceData.getType());
+            spaceToUpdate.setPrice(newSpaceData.getPrice());
+            spaceToUpdate.setAvailability(newSpaceData.isAvailable());
         }
     }
 }
