@@ -1,19 +1,21 @@
 package org.tasks.reservation;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import jakarta.persistence.EntityManager;
+import org.tasks.reservation.entities.CoworkingSpace;
+
 import java.util.Optional;
 import java.util.Scanner;
 
 public class Admin {
 
     private final Scanner scanner;
-    private final Repository repository;
 
-    public Admin(Repository repository, Scanner scanner) {
+    public Admin(Scanner scanner) {
         this.scanner = scanner;
-        this.repository = repository;
+    }
+
+    public Admin(EntityManager entityManager, Scanner scanner) {
+        this.scanner = scanner;
     }
 
     protected Optional<CoworkingSpace> askUserToWriteCoworkingSpaceString() {
@@ -30,56 +32,59 @@ public class Admin {
     }
 
     protected void addSpace(CoworkingSpace newSpace) {
-        String query = "INSERT INTO coworkingSpace (name, type, price) VALUES (?, ?, ?)";
-        try (PreparedStatement preparedStatement = Main.postgresDbConnection.prepareStatement(query)) {
-            preparedStatement.setString(1, newSpace.getName());
-            preparedStatement.setString(2, newSpace.getType());
-            preparedStatement.setDouble(3, newSpace.getPrice());
-
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
+        try (EntityManager entityManager = Main.getSessionFactory().createEntityManager()) {
+            entityManager.getTransaction().begin();
+            entityManager.persist(newSpace);
+            entityManager.getTransaction().commit();
+            System.out.println("Coworking space added successfully!");
+        } catch (Exception e) {
+            System.err.println("Error adding coworking space: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
     protected void removeSpace(int id) {
-        String deleteQuery = "DELETE FROM coworkingSpace WHERE id = ?";
-        try (PreparedStatement preparedStatement = Main.postgresDbConnection.prepareStatement(deleteQuery)) {
-            preparedStatement.setInt(1, id);
-            preparedStatement.executeUpdate();
+        try (EntityManager entityManager = Main.getSessionFactory().createEntityManager()) {
+            entityManager.getTransaction().begin();
+            CoworkingSpace spaceToDelete = entityManager.find(CoworkingSpace.class, id);
+            if (spaceToDelete == null) {
+                System.out.println("No space found with ID: " + id);
+                entityManager.getTransaction().rollback();
+            } else entityManager.remove(spaceToDelete);
             System.out.println("DELETED!");
-        } catch (SQLException e) {
+            entityManager.getTransaction().commit();
+        } catch (Exception e) {
+            System.err.println("Error deleting coworking space: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
     protected void updateSpace(int idToUpdate) {
-        String selectQuery = "SELECT * FROM coworkingSpace WHERE id = ?";
-        try (PreparedStatement preparedStatement = Main.postgresDbConnection.prepareStatement(selectQuery)) {
-            preparedStatement.setInt(1, idToUpdate);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (!resultSet.next()) {
-                System.out.println("No space found with the specified ID: " + idToUpdate);
-            }
-            String updateQuery = "UPDATE coworkingSpace SET name = ?, type = ?, price = ?, availability = ? WHERE id = ?";
-            try (PreparedStatement updateStatement = Main.postgresDbConnection.prepareStatement(updateQuery)) {
+
+        try (EntityManager entityManager = Main.getSessionFactory().createEntityManager()) {
+            entityManager.getTransaction().begin();
+            CoworkingSpace spaceToUpdate = entityManager.find(CoworkingSpace.class, idToUpdate);
+            if (spaceToUpdate == null) {
+                System.out.println("No space found with ID: " + idToUpdate);
+                entityManager.getTransaction().rollback();
+            } else {
                 Optional<CoworkingSpace> coworkingSpace = askUserToWriteCoworkingSpaceString();
                 while (coworkingSpace.isEmpty()) {
                     System.out.println("Invalid input. Please enter data in format: Name,type,price");
                     coworkingSpace = askUserToWriteCoworkingSpaceString();
                 }
-                CoworkingSpace space = coworkingSpace.get();
+                CoworkingSpace newSpaceData = coworkingSpace.get();
 
-                updateStatement.setString(1, space.getName());
-                updateStatement.setString(2, space.getType());
-                updateStatement.setDouble(3, space.getPrice());
-                updateStatement.setBoolean(4, space.isAvailable());
-                updateStatement.setInt(5, idToUpdate);
-                updateStatement.executeUpdate();
+                spaceToUpdate.setName(newSpaceData.getName());
+                spaceToUpdate.setType(newSpaceData.getType());
+                spaceToUpdate.setPrice(newSpaceData.getPrice());
+                spaceToUpdate.setAvailability(newSpaceData.isAvailable());
 
+                entityManager.getTransaction().commit();
                 System.out.println("UPDATED!");
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
+            System.err.println("Error updating coworking space: " + e.getMessage());
             e.printStackTrace();
         }
     }

@@ -1,63 +1,25 @@
 package org.tasks.reservation;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.Optional;
-import java.util.Properties;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 
 public class Main {
-    private final static Repository repository = new Repository();
-    public static Connection postgresDbConnection;
+    private static EntityManagerFactory entityManagerFactory;
 
-    public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        Main main = new Main();
-
-        try (Connection connection = getDatabaseConnection()) {
-            postgresDbConnection = connection;
-            main.tryToLoadMenu();
-        }
+    public static void main(String[] args) {
+        MenuLauncher menuLauncher = new MenuLauncher(new Repository());
+        menuLauncher.showMainMenu();
     }
 
-    private static Connection getDatabaseConnection() throws SQLException, ClassNotFoundException {
-        String jdbcUrl = getPropertyValue("jdbcUrl");
-        String username = getPropertyValue("username");
-        String password = getPropertyValue("password");
-
-        Class.forName("org.postgresql.Driver");
-
-        postgresDbConnection = DriverManager.getConnection(jdbcUrl, username, password);
-        System.out.println("Connected to database successfully!");
-        return postgresDbConnection;
-    }
-
-    private static String getPropertyValue(String propertyKey) {
-        Properties properties = new Properties();
-
-        try (FileInputStream fis = new FileInputStream("src\\main\\resources\\database.property")) {
-            properties.load(fis);
-        } catch (IOException e) {
-            e.printStackTrace();
+    public static EntityManagerFactory getSessionFactory() {
+        if (entityManagerFactory == null) {
+            try {
+                entityManagerFactory = Persistence.createEntityManagerFactory("my-persistence-unit");
+            } catch (Throwable ex) {
+                System.err.println("SessionFactory creation failed: " + ex);
+                ex.printStackTrace();
+            }
         }
-        return Optional.ofNullable(properties.getProperty(propertyKey))
-                .orElseThrow(() -> new IllegalArgumentException("Property not found for key: " + propertyKey));
-    }
-
-    private void tryToLoadMenu() {
-        try {
-            String directoryPath = "target\\classes\\";
-            CustomClassLoader classLoader = new CustomClassLoader(directoryPath);
-            String className = "org.tasks.reservation.MenuLauncher";
-            Class<?> loadedClass = classLoader.loadClass(className);
-            Object instance = loadedClass.getDeclaredConstructor(Repository.class).newInstance(repository);
-            Method method = loadedClass.getMethod("showMainMenu");
-            method.invoke(instance);
-        } catch (Exception e) {
-            System.out.println("Something went wrong " + e.getMessage());
-            e.printStackTrace();
-        }
+        return entityManagerFactory;
     }
 }

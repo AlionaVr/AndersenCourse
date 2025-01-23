@@ -1,63 +1,32 @@
 package org.tasks.reservation;
 
-import java.io.Serializable;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import jakarta.persistence.EntityManager;
+import org.tasks.reservation.entities.CoworkingSpace;
+import org.tasks.reservation.entities.CoworkingSpaceBooking;
 
-public class Repository implements Serializable {
-    public CustomList<CoworkingSpace> getSpaces() {
-        CustomList<CoworkingSpace> spaces = new CustomList<>();
-        String query = "SELECT * FROM coworkingSpace";
-        try (Statement statement = Main.postgresDbConnection.createStatement();
-             ResultSet resultSet = statement.executeQuery(query)) {
+import java.util.ArrayList;
+import java.util.List;
 
-            while (resultSet.next()) {
-                spaces.add(new CoworkingSpace(
-                        resultSet.getInt("id"),
-                        resultSet.getString("name"),
-                        resultSet.getString("type"),
-                        resultSet.getDouble("price"),
-                        resultSet.getBoolean("availability")));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return spaces;
+
+public class Repository {
+    public List<CoworkingSpace> getSpaces() {
+        return fetchData("FROM CoworkingSpace", CoworkingSpace.class);
     }
 
-    public CustomList<CoworkingSpaceBooking> getMyReservations() {
-        CustomList<CoworkingSpaceBooking> myReservations = new CustomList<>();
-        String query = """
-                SELECT coworkingSpaceBooking.coworking_space_id,
-                coworkingSpaceBooking.booking_date,
-                       coworkingSpace.name,
-                       coworkingSpace.type,
-                       coworkingSpace.price,
-                       coworkingSpace.availability,
-                   coworkingSpaceBooking.booking_details
-                FROM coworkingSpaceBooking
-                JOIN coworkingSpace ON coworkingSpaceBooking.coworking_space_id = coworkingSpace.id;
-                """;
-        try (Statement statement = Main.postgresDbConnection.createStatement();
-             ResultSet resultSet = statement.executeQuery(query)) {
-            while (resultSet.next()) {
-                CoworkingSpace coworkingSpace = new CoworkingSpace(
-                        resultSet.getInt("coworking_space_id"),
-                        resultSet.getString("name"),
-                        resultSet.getString("type"),
-                        resultSet.getDouble("price"),
-                        resultSet.getBoolean("availability")
-                );
-                CoworkingSpaceBooking booking = new CoworkingSpaceBooking(
-                        coworkingSpace,
-                        resultSet.getString("booking_details")
-                );
-                myReservations.add(booking);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+    public List<CoworkingSpaceBooking> getMyReservations() {
+        return fetchData("SELECT b FROM CoworkingSpaceBooking b JOIN FETCH b.coworkingSpace", CoworkingSpaceBooking.class);
+    }
+
+    private <T> List<T> fetchData(String query, Class<T> classOfSpace) {
+        List<T> listOfSpaces = new ArrayList<>();
+        try (EntityManager session = Main.getSessionFactory().createEntityManager()) {
+            session.getTransaction().begin();
+            List<T> reservations = session.createQuery(query, classOfSpace).getResultList();
+            listOfSpaces.addAll(reservations);
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            System.err.println("Error fetching data: " + e.getMessage());
         }
-        return myReservations;
+        return listOfSpaces;
     }
 }

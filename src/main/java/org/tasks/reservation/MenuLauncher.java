@@ -1,5 +1,7 @@
 package org.tasks.reservation;
 
+import org.tasks.reservation.entities.CoworkingSpace;
+
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -14,8 +16,8 @@ public class MenuLauncher {
     public MenuLauncher(Repository repository) {
         this.scanner = new Scanner(System.in);
         this.manager = new SpaceManager(repository, scanner);
-        this.admin = new Admin(repository, scanner);
-        this.customer = new Customer(scanner, manager);
+        this.admin = new Admin(scanner);
+        this.customer = new Customer();
         this.repository = repository;
     }
 
@@ -123,16 +125,18 @@ public class MenuLauncher {
     }
 
     private void showAndReserveSpace() {
-        if (repository.getSpaces().isNotEmpty()) {
+        if (!repository.getSpaces().isEmpty()) {
             System.out.println("Choose id of one available coworking spaces");
             manager.showSpaces(CoworkingSpace::isAvailable);
             int chosenSpaceID = getChosenSpaceID();
-            customer.reserve(chosenSpaceID);
+            System.out.println("Please, enter booking details: ");
+            String bookingDetails = scanner.nextLine().trim();
+            customer.reserve(chosenSpaceID, bookingDetails);
         } else System.out.println("Sorry, no available spaces");
     }
 
     private void showAndCancelReservation() {
-        if (repository.getMyReservations().isNotEmpty()) {
+        if (!repository.getMyReservations().isEmpty()) {
             System.out.println("Choose the number of space, that you would like to cancel. ");
             System.out.println("It's list of your reservations: ");
             manager.showMyReservation();
