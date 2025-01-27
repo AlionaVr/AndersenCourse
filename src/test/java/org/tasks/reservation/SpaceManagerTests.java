@@ -2,6 +2,8 @@ package org.tasks.reservation;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.tasks.reservation.repository.CoworkingSpaceBookingRepository;
+import org.tasks.reservation.repository.CoworkingSpaceRepository;
 
 import java.util.Optional;
 import java.util.Scanner;
@@ -13,13 +15,15 @@ import static org.mockito.Mockito.*;
 public class SpaceManagerTests {
     private SpaceManager manager;
     private Scanner scannerMock;
+    private CoworkingSpaceRepository coworkingSpaceRepository;
+    private CoworkingSpaceBookingRepository coworkingSpaceBookingRepository;
 
     @BeforeEach
     void setUp() {
         scannerMock = mock(Scanner.class);
-        Repository repository = new Repository();
-        manager = new SpaceManager(repository, scannerMock);
+        manager = new SpaceManager(scannerMock, coworkingSpaceRepository, coworkingSpaceBookingRepository);
     }
+
     @Test
     void givenInvalidAndValidInput_whenAskUserToWriteNumberOfSpace_thenReturnValidInput() {
         //arrange

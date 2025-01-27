@@ -1,27 +1,25 @@
-package org.tasks.reservation;
+package org.tasks.reservation.service.impl;
 
 import jakarta.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.tasks.reservation.SpaceManager;
 import org.tasks.reservation.entities.CoworkingSpace;
+import org.tasks.reservation.helper.ExecutorEntityManagerHelper;
+import org.tasks.reservation.service.AdminService;
 
 import java.util.Optional;
 import java.util.Scanner;
 
-public class Admin {
-
+@Service
+@RequiredArgsConstructor
+public class ConsoleAdminService implements AdminService {
     private final Scanner scanner;
-    ExecutorEntityManager executorEntityManager = new ExecutorEntityManager();
+    private final ExecutorEntityManagerHelper executorEntityManagerHelper;
+    private final SpaceManager manager;
 
-    SpaceManager manager;
-
-    public Admin(Scanner scanner) {
-        this.scanner = scanner;
-    }
-
-    public Admin(EntityManager entityManager, Scanner scanner) {
-        this.scanner = scanner;
-    }
-
-    protected Optional<CoworkingSpace> askUserToWriteCoworkingSpaceString() {
+    @Override
+    public Optional<CoworkingSpace> askUserToWriteCoworkingSpaceString() {
         System.out.println("Enter name of space, type and price: \n ***in format: Name,type,price ");
         try {
             String spaceStringSeparatedByComma = scanner.nextLine();
@@ -34,16 +32,18 @@ public class Admin {
         return Optional.empty();
     }
 
-    protected void addSpace(CoworkingSpace newSpace) {
-        executorEntityManager.executeWithEntityManager(
+    @Override
+    public void addSpace(CoworkingSpace newSpace) {
+        executorEntityManagerHelper.executeWithEntityManager(
                 entityManager -> entityManager.persist(newSpace),
                 "Coworking space added successfully!",
                 "Error adding coworking space: ");
 
     }
 
-    protected void removeSpace(int id) {
-        executorEntityManager.executeWithEntityManager(
+    @Override
+    public void removeSpace(int id) {
+        executorEntityManagerHelper.executeWithEntityManager(
                 entityManager -> findAndRemoveSpace(id, entityManager),
                 "DELETED!",
                 "Error deleting coworking space: ");
@@ -55,8 +55,9 @@ public class Admin {
             entityManager.remove(spaceToDelete);
     }
 
-    protected void updateSpace(int idToUpdate) {
-        executorEntityManager.executeWithEntityManager(
+    @Override
+    public void updateSpace(int idToUpdate) {
+        executorEntityManagerHelper.executeWithEntityManager(
                 entityManager -> updateCoworkingSpaceBasedOnUserInput(idToUpdate, entityManager),
                 "UPDATED!",
                 "Error updating coworking space: "

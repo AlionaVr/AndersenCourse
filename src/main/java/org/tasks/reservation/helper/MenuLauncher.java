@@ -1,25 +1,28 @@
-package org.tasks.reservation;
+package org.tasks.reservation.helper;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.tasks.reservation.SpaceManager;
 import org.tasks.reservation.entities.CoworkingSpace;
+import org.tasks.reservation.repository.CoworkingSpaceBookingRepository;
+import org.tasks.reservation.repository.CoworkingSpaceRepository;
+import org.tasks.reservation.service.impl.ConsoleAdminService;
+import org.tasks.reservation.service.impl.ConsoleCustomerService;
 
 import java.util.Optional;
 import java.util.Scanner;
 
+@Component
+@RequiredArgsConstructor
 public class MenuLauncher {
     private final SpaceManager manager;
-    private final Admin admin;
-    private final Customer customer;
-    private final Repository repository;
+    private final ConsoleAdminService consoleAdminService;
+    private final ConsoleCustomerService consoleCustomerService;
+    private final CoworkingSpaceBookingRepository coworkingSpaceBookingRepository;
+    private final CoworkingSpaceRepository coworkingSpaceRepository;
     private final Scanner scanner;
     private boolean programRunning = true;
 
-    public MenuLauncher(Repository repository) {
-        this.scanner = new Scanner(System.in);
-        this.manager = new SpaceManager(repository, scanner);
-        this.admin = new Admin(scanner);
-        this.customer = new Customer();
-        this.repository = repository;
-    }
 
     public void showMainMenu() {
         System.out.println("Hello! Welcome to our Coworking! Please log in to the system.");
@@ -61,18 +64,18 @@ public class MenuLauncher {
 
             switch (input) {
                 case 1 -> {
-                    admin.addSpace(enterCoworkingSpaceByUser());
+                    consoleAdminService.addSpace(enterCoworkingSpaceByUser());
                     manager.showSpaces(space -> true);
                 }
                 case 2 -> {
                     manager.showSpaces(space -> true);
                     int chosenSpaceID = getChosenSpaceID();
-                    admin.removeSpace(chosenSpaceID);
+                    consoleAdminService.removeSpace(chosenSpaceID);
                 }
                 case 3 -> {
                     manager.showSpaces(space -> true);
                     int chosenSpaceID = getChosenSpaceID();
-                    admin.updateSpace(chosenSpaceID);
+                    consoleAdminService.updateSpace(chosenSpaceID);
                 }
                 case 4 -> manager.showSpaces(space -> !space.isAvailable());
                 case 5 -> showMainMenu();
@@ -88,10 +91,10 @@ public class MenuLauncher {
     }
 
     private CoworkingSpace enterCoworkingSpaceByUser() {
-        Optional<CoworkingSpace> coworkingSpace = admin.askUserToWriteCoworkingSpaceString();
+        Optional<CoworkingSpace> coworkingSpace = consoleAdminService.askUserToWriteCoworkingSpaceString();
         while (coworkingSpace.isEmpty()) {
             System.out.println("Invalid input. Please enter data in format: Name,type,price");
-            coworkingSpace = admin.askUserToWriteCoworkingSpaceString();
+            coworkingSpace = consoleAdminService.askUserToWriteCoworkingSpaceString();
         }
         return coworkingSpace.get();
     }
@@ -125,7 +128,7 @@ public class MenuLauncher {
     }
 
     private void showAndReserveSpace() {
-        if (repository.getSpaces().isEmpty()) {
+        if (coworkingSpaceRepository.getSpaces().isEmpty()) {
             System.out.println("Sorry, no available spaces");
             return;
         }
@@ -135,11 +138,11 @@ public class MenuLauncher {
         int chosenSpaceID = getChosenSpaceID();
         System.out.println("Please, enter booking details: ");
         String bookingDetails = scanner.nextLine().trim();
-        customer.reserve(chosenSpaceID, bookingDetails);
+        consoleCustomerService.reserve(chosenSpaceID, bookingDetails);
     }
 
     private void showAndCancelReservation() {
-        if (repository.getMyReservations().isEmpty()) {
+        if (coworkingSpaceBookingRepository.getMyReservations().isEmpty()) {
             System.out.println("Sorry, your list is Empty ");
             return;
         }
@@ -147,7 +150,7 @@ public class MenuLauncher {
         System.out.println("It's list of your reservations: ");
         manager.showMyReservation();
         int chosenSpaceID = getChosenSpaceID();
-        customer.cancelReservation(chosenSpaceID);
+        consoleCustomerService.cancelReservation(chosenSpaceID);
     }
 
     private void exitProgram() {
