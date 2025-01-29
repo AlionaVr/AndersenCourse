@@ -1,26 +1,27 @@
 package org.tasks.reservation;
 
 import jakarta.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.tasks.reservation.entities.CoworkingSpace;
 import org.tasks.reservation.entities.CoworkingSpaceBooking;
+import org.tasks.reservation.repository.CoworkingSpaceBookingRepository;
+import org.tasks.reservation.repository.CoworkingSpaceRepository;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.function.Predicate;
 
-
+@Component
+@RequiredArgsConstructor
 public class SpaceManager {
     private final Scanner scanner;
-    private final Repository repository;
+    private final CoworkingSpaceRepository coworkingSpaceRepository;
+    private final CoworkingSpaceBookingRepository coworkingSpaceBookingRepository;
 
-    public SpaceManager(Repository repository, Scanner scanner) {
-        this.repository = repository;
-        this.scanner = scanner;
-    }
-
-    protected void showSpaces(Predicate<CoworkingSpace> availabilityFilter) {
-        List<CoworkingSpace> filteredSpaces = repository.getSpaces().stream()
+    public void showSpaces(Predicate<CoworkingSpace> availabilityFilter) {
+        List<CoworkingSpace> filteredSpaces = coworkingSpaceRepository.getSpaces().stream()
                 .filter(availabilityFilter)
                 .toList();
 
@@ -33,8 +34,8 @@ public class SpaceManager {
         });
     }
 
-    protected void showMyReservation() {
-        List<CoworkingSpaceBooking> myReservations = repository.getMyReservations().stream().toList();
+    public void showMyReservation() {
+        List<CoworkingSpaceBooking> myReservations = coworkingSpaceBookingRepository.getMyReservations().stream().toList();
 
         if (myReservations.isEmpty()) {
             System.out.println("Empty list.");
@@ -45,7 +46,7 @@ public class SpaceManager {
         });
     }
 
-    protected Optional<Integer> askUserToWriteNumberOfSpace() {
+    public Optional<Integer> askUserToWriteNumberOfSpace() {
         try {
             int inputNumber = Integer.parseInt(scanner.nextLine());
             return Optional.of(inputNumber);
@@ -55,7 +56,7 @@ public class SpaceManager {
         return Optional.empty();
     }
 
-    protected boolean isSpaceExist(CoworkingSpace space, EntityManager entityManager) {
+    public boolean isSpaceExist(CoworkingSpace space, EntityManager entityManager) {
         if (space == null) {
             System.out.println("Space is not found");
             entityManager.getTransaction().rollback();
