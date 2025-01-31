@@ -1,4 +1,4 @@
-package org.tasks.reservation.entities;
+package org.tasks.reservation.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

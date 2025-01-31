@@ -1,15 +1,12 @@
 package org.tasks.reservation.service;
 
-import org.tasks.reservation.entities.CoworkingSpace;
-
-import java.util.Optional;
+import org.tasks.reservation.entity.CoworkingSpace;
 
 public interface AdminService {
-    Optional<CoworkingSpace> askUserToWriteCoworkingSpaceString();
 
     void addSpace(CoworkingSpace newSpace);
 
     void removeSpace(int id);
 
-    void updateSpace(int idToUpdate);
+    void updateSpace(int id, CoworkingSpace updatedSpace);
 }

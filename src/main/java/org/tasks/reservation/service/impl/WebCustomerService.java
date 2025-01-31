@@ -1,23 +1,29 @@
 package org.tasks.reservation.service.impl;
 
-
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.tasks.reservation.SpaceManager;
-import org.tasks.reservation.entities.CoworkingSpace;
-import org.tasks.reservation.entities.CoworkingSpaceBooking;
+import org.tasks.reservation.entity.CoworkingSpace;
+import org.tasks.reservation.entity.CoworkingSpaceBooking;
 import org.tasks.reservation.helper.ExecutorEntityManagerHelper;
 import org.tasks.reservation.service.CustomerService;
 
+import java.time.LocalDate;
+
 @Component
 @RequiredArgsConstructor
-public class ConsoleCustomerService implements CustomerService {
+public class WebCustomerService implements CustomerService {
+
     private final ExecutorEntityManagerHelper executorEntityManagerHelper;
     private final SpaceManager manager;
 
     @Override
-    public void reserve(int id, String bookingDetails) {
+    public void reserve(int id, String bookingDetails, LocalDate date) {
+        if (id == 150) { // just for test
+            throw new RuntimeException("Id = 150 doesn't exist");
+        }
+
         executorEntityManagerHelper.executeWithEntityManager(
                 entityManager -> findAndReserveSpace(id, bookingDetails, entityManager),
                 "RESERVED! Booking successfully added to database.",
@@ -39,19 +45,17 @@ public class ConsoleCustomerService implements CustomerService {
     }
 
     @Override
-    public void cancelReservation(int coworkingSpaceId) {
+    public void cancelReservation(int bookingId) {
         executorEntityManagerHelper.executeWithEntityManager(entityManager -> {
-            findAndCancelReservation(coworkingSpaceId, entityManager);
+            CoworkingSpaceBooking booking = entityManager.find(CoworkingSpaceBooking.class, bookingId);
+            CoworkingSpace space = booking.getCoworkingSpace();
+            if (manager.isSpaceExist(space, entityManager)) {
+                entityManager.createNativeQuery("DELETE FROM coworking_space_booking WHERE id = :spaceId")
+                        .setParameter("spaceId", bookingId)
+                        .executeUpdate();
+                space.setAvailability(true);
+            }
         }, "CANCELED!Booking successfully removed from database.", "Error removing from My Reservation : ");
     }
-
-    private void findAndCancelReservation(int coworkingSpaceId, EntityManager entityManager) {
-        CoworkingSpace space = entityManager.find(CoworkingSpace.class, coworkingSpaceId);
-        if (manager.isSpaceExist(space, entityManager)) {
-            entityManager.createNativeQuery("DELETE FROM coworkingspacebooking WHERE coworking_space_id = :spaceId")
-                    .setParameter("spaceId", coworkingSpaceId)
-                    .executeUpdate();
-            space.setAvailability(true);
-        }
-    }
 }
+

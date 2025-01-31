@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Home</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+        .menu {
+            text-align: center;
+            background: #fff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .menu h1 {
+            margin-bottom: 1rem;
+        }
+        .menu a {
+            display: block;
+            margin: 1rem 0;
+            text-decoration: none;
+            color: #ffffff;
+            background: #007bff;
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+        .menu a:hover {
+            background: #0056b3;
+        }
+
+    </style>
+</head>
+<body>
+<div class="menu">
+    <h1>Welcome to the Coworking System</h1>
+    <a href="http://localhost:8080/coworkingSpaces">Admin Menu</a>
+    <a href="http://localhost:8080/coworkingBookingSpaces">Customer Menu</a>
+</div>
+</body>
+</html>
