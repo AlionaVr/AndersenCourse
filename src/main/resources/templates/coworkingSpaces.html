@@ -107,28 +107,50 @@
     </tr>
 </table>
 
-<!-- Add Coworking Space Form -->
+
 <h2>Add Coworking Space</h2>
 <form action="/coworkingSpace" method="POST">
     <label for="add-name">Name:</label>
     <input id="add-name" name="name" placeholder="Enter name" required type="text">
     <label for="add-type">Type:</label>
-    <input id="add-type" name="type" placeholder="Enter type" required type="text">
+    <select id="add-type" name="type" required>
+        <th:block th:each="enumValue : ${types}">
+            <option th:text="${enumValue}" th:value="${enumValue}"></option>
+        </th:block>
+    </select>
+    <br><br>
     <label for="add-price">Price:</label>
     <input id="add-price" name="price" placeholder="Enter price" required step="any" type="number">
     <button type="submit">Add Coworking Space</button>
 </form>
 
-<!-- Delete Coworking Space Form -->
 <h2>Delete Coworking Space</h2>
+<!-- Display Success or Error Message -->
+<div>
+    <span style="color: green;" th:if="${deleteResponseDto != null and deleteResponseDto.success}">
+        Coworking space has been deleted!
+    </span>
+    <span style="color: red;" th:if="${deleteResponseDto != null and !deleteResponseDto.success}">
+        Error: <span th:text="${deleteResponseDto.error}"></span>
+    </span>
+</div>
 <form action="/coworkingSpace/delete" method="GET">
     <label for="delete-id">ID пространства:</label>
     <input id="delete-id" name="id" required type="number">
     <button type="submit">Delete Space</button>
 </form>
 
-<!-- Update Coworking Space Form -->
+
 <h2>Update Coworking Space</h2>
+<!-- Display Success or Error Message -->
+<div>
+    <span style="color: green;" th:if="${updateResponseDto != null and updateResponseDto.success}">
+        Coworking space has been updated!
+    </span>
+    <span style="color: red;" th:if="${updateResponseDto != null and !updateResponseDto.success}">
+        Error: <span th:text="${updateResponseDto.error}"></span>
+    </span>
+</div>
 <form action="/coworkingSpace/update" method="POST">
     <label for="update-id">ID:</label>
     <input id="update-id" name="id" placeholder="Enter ID" required type="number">
@@ -137,7 +159,11 @@
     <input id="update-name" name="name" placeholder="Enter name" required type="text">
     <br><br>
     <label for="update-type">Type:</label>
-    <input id="update-type" name="type" placeholder="Enter type" required type="text">
+    <select id="update-type" name="type" required>
+        <th:block th:each="enumValue : ${types}">
+            <option th:text="${enumValue}" th:value="${enumValue}"></option>
+        </th:block>
+    </select>
     <br><br>
     <label for="update-price">Price:</label>
     <input id="update-price" name="price" placeholder="Enter price" required step="any" type="number">

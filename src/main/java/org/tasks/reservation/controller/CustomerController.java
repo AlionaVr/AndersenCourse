@@ -6,7 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.tasks.reservation.dto.ReserveResponseDto;
+import org.tasks.reservation.dto.StatusResponseDto;
 import org.tasks.reservation.entity.CoworkingSpace;
 import org.tasks.reservation.entity.CoworkingSpaceBooking;
 import org.tasks.reservation.repository.CoworkingSpaceBookingRepository;
@@ -25,12 +25,16 @@ public class CustomerController {
 
     @GetMapping("/coworkingBookingSpaces")
     public String viewAvailableSpaces(Model model) {
+        populateSpacesAndReservations(model);
+        return "templates/reservations.html";
+    }
+
+    private void populateSpacesAndReservations(Model model) {
         List<CoworkingSpace> availableSpaces = coworkingSpaceRepository.getAvailableSpaces();
         List<CoworkingSpaceBooking> reservations = coworkingSpaceBookingRepository.getMyReservations();
 
         model.addAttribute("AvailableSpaces", availableSpaces);
         model.addAttribute("MyReservation", reservations);
-        return "reservations.html";
     }
 
     @PostMapping(path = "/reservations")
@@ -40,20 +44,20 @@ public class CustomerController {
             @RequestParam(name = "spaceDate") String spaceDate,
             Model model
     ) {
+        StatusResponseDto response;
         try {
             customerService.reserve(id, bookingDetails, LocalDate.parse(spaceDate));
-            model.addAttribute("reserveResponseDto", new ReserveResponseDto());
-            return "redirect:/coworkingBookingSpaces";
+            response = new StatusResponseDto();
         } catch (Exception ex) {
-            model.addAttribute("reserveResponseDto", new ReserveResponseDto(ex.getMessage()));
-            return "reservations.html";
+            response = new StatusResponseDto(ex.getMessage());
         }
+        model.addAttribute("reserveResponseDto", response);
+        populateSpacesAndReservations(model);
+        return "templates/reservations.html";
     }
-
     @PostMapping("/reservations/cancel")
     public String cancelReservation(@RequestParam("id") Integer id) {
         customerService.cancelReservation(id);
-
         return "redirect:/coworkingBookingSpaces";
     }
 }

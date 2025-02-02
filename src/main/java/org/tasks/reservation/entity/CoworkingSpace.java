@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.tasks.reservation.helper.TypeOfSpace;
 
 @Getter
 @Setter
@@ -19,7 +20,8 @@ public class CoworkingSpace {
     private String name;
 
     @Column
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private TypeOfSpace type;
 
     @Column
     private double price;
@@ -29,7 +31,7 @@ public class CoworkingSpace {
 
     public CoworkingSpace(String name, String type, double price) {
         this.name = name;
-        this.type = type;
+        this.type = TypeOfSpace.valueOf(type);
         this.price = price;
     }
 

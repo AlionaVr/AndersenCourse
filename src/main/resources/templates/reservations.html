@@ -86,6 +86,8 @@
 
 
 
+
+
     </style>
 </head>
 <body>
@@ -132,10 +134,10 @@
 
 <!-- Display Success or Error Message -->
 <div>
-    <span style="color: green;" th:if="${reserveResponseDto != null and reserveResponseDto.reserved}">
+    <span style="color: green;" th:if="${reserveResponseDto != null and reserveResponseDto.success}">
         Coworking space has been reserved!
     </span>
-    <span style="color: red;" th:if="${reserveResponseDto != null and !reserveResponseDto.reserved}">
+    <span style="color: red;" th:if="${reserveResponseDto != null and !reserveResponseDto.success}">
         Error: <span th:text="${reserveResponseDto.error}"></span>
     </span>
 </div>
