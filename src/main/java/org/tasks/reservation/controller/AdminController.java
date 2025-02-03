@@ -17,6 +17,7 @@ import java.util.List;
 @Controller
 public class AdminController {
     private final CoworkingSpaceRepository coworkingSpaceRepository;
+
     @Qualifier("webAdminService")
     private final AdminService adminService;
 
@@ -28,11 +29,11 @@ public class AdminController {
     @GetMapping("/coworkingSpaces")
     public String viewCoworkingSpaces(Model model) {
         populateSpaces(model);
-        return "templates/coworkingSpaces.html";
+        return "coworkingSpaces.html";
     }
 
     private void populateSpaces(Model model) {
-        List<CoworkingSpace> spaces = coworkingSpaceRepository.getSpaces();
+        List<CoworkingSpace> spaces = coworkingSpaceRepository.findAll();
         model.addAttribute("coworkingSpaces", spaces);
         model.addAttribute("types", TypeOfSpace.values());
     }
@@ -53,11 +54,11 @@ public class AdminController {
         try {
             adminService.removeSpace(id);
             model.addAttribute("deleteResponseDto", new StatusResponseDto());
-            return "templates/coworkingSpaces.html";
         } catch (Exception ex) {
             model.addAttribute("deleteResponseDto", new StatusResponseDto(ex.getMessage()));
-            return "templates/coworkingSpaces.html";
         }
+        populateSpaces(model);
+        return "coworkingSpaces.html";
     }
 
     @PostMapping(path = "/coworkingSpace/update")
@@ -76,7 +77,7 @@ public class AdminController {
             model.addAttribute("updateResponseDto", new StatusResponseDto(ex.getMessage()));
         }
         populateSpaces(model);
-        return "templates/coworkingSpaces.html";
+        return "coworkingSpaces.html";
     }
 }
 

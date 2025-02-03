@@ -1,9 +1,7 @@
 package org.tasks.reservation.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.tasks.reservation.entity.CoworkingSpaceBooking;
 
-import java.util.List;
-
-public interface CoworkingSpaceBookingRepository {
-    List<CoworkingSpaceBooking> getMyReservations();
+public interface CoworkingSpaceBookingRepository extends JpaRepository<CoworkingSpaceBooking, Integer> {
 }
