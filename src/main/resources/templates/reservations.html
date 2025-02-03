@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>My Reservations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        h1, h2 {
+            text-align: center;
+            margin-top: 20px;
+            color: #444;
+        }
+
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        th, td {
+            padding: 10px 15px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        form {
+            width: 50%;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        form input, form button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        form button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            background-color: #45a049;
+        }
+
+        .success-message, .error-message {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .success-message {
+            color: #4CAF50;
+        }
+
+        .error-message {
+            color: #FF5722;
+        }
+
+
+
+
+
+    </style>
+</head>
+<body>
+<h2>Available Coworking Spaces</h2>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Price</th>
+        <th>Availability</th>
+    </tr>
+    <tr th:each="cs: ${AvailableSpaces}">
+        <td th:text="${cs.id}"></td>
+        <td th:text="${cs.name}"></td>
+        <td th:text="${cs.type}"></td>
+        <td th:text="${cs.price}"></td>
+        <td th:text="${cs.availability}"></td>
+    </tr>
+</table>
+
+<h2>My Reservations</h2>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Space Name</th>
+        <th>Booking Details</th>
+        <th>Cancel</th>
+    </tr>
+    <tr th:each="reservation : ${MyReservation}">
+        <td th:text="${reservation.id}"></td>
+        <td th:text="${reservation.coworkingSpace.name}"></td>
+        <td th:text="${reservation.bookingDetails}"></td>
+        <td>
+            <form action="/reservations/cancel" method="POST">
+                <input name="id" th:value="${reservation.id}" type="hidden">
+                <button type="submit">Cancel</button>
+            </form>
+        </td>
+    </tr>
+</table>
+
+<h2>Reserve a Coworking Space</h2>
+
+<!-- Display Success or Error Message -->
+<div>
+    <span style="color: green;" th:if="${reserveResponseDto != null and reserveResponseDto.success}">
+        Coworking space has been reserved!
+    </span>
+    <span style="color: red;" th:if="${reserveResponseDto != null and !reserveResponseDto.success}">
+        Error: <span th:text="${reserveResponseDto.error}"></span>
+    </span>
+</div>
+
+<form action="/reservations" method="post">
+    <label for="space-id">Coworking Space ID:</label>
+    <input id="space-id" name="id" required type="number">
+
+    <label for="booking-details">Booking Details:</label>
+    <input id="booking-details" name="bookingDetails" required type="text">
+
+    <label for="space-date">Date:</label>
+    <input id="space-date" name="spaceDate" required type="date">
+
+    <button type="submit">Reserve</button>
+</form>
+
+<a href="http://localhost:8080/"> Menu</a>
+
+</body>
+</html>

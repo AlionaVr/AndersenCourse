@@ -27,6 +27,7 @@ public class ExecutorEntityManagerHelper {
         } catch (Exception e) {
             System.err.println(errorMessage + e.getMessage());
             e.printStackTrace();
+            throw e;
         }
     }
 

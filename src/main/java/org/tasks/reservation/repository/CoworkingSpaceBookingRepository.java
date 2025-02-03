@@ -1,6 +1,6 @@
 package org.tasks.reservation.repository;
 
-import org.tasks.reservation.entities.CoworkingSpaceBooking;
+import org.tasks.reservation.entity.CoworkingSpaceBooking;
 
 import java.util.List;
 

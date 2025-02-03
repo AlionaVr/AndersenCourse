@@ -2,7 +2,7 @@ package org.tasks.reservation.repository.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.tasks.reservation.entities.CoworkingSpaceBooking;
+import org.tasks.reservation.entity.CoworkingSpaceBooking;
 import org.tasks.reservation.helper.ExecutorEntityManagerHelper;
 import org.tasks.reservation.repository.CoworkingSpaceBookingRepository;
 
