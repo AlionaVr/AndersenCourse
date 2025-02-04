@@ -2,6 +2,7 @@ package org.tasks.reservation.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.tasks.reservation.entity.CoworkingSpace;
 import org.tasks.reservation.repository.CoworkingSpaceRepository;
 import org.tasks.reservation.service.AdminService;
@@ -23,6 +24,7 @@ public class WebAdminService implements AdminService {
         }
     }
 
+    @Transactional
     @Override
     public void removeSpace(int id) {
         CoworkingSpace spaceToDelete = coworkingSpaceRepository.findById(id)
@@ -34,6 +36,7 @@ public class WebAdminService implements AdminService {
         System.out.println("Coworking space with ID " + id + " was deleted.");
     }
 
+    @Transactional
     public void updateSpace(int idToUpdate, CoworkingSpace updatedSpace) {
         CoworkingSpace spaceToUpdate = coworkingSpaceRepository.findById(idToUpdate)
                 .orElseThrow(() -> new RuntimeException("Space doesn't exist."));
@@ -48,3 +51,27 @@ public class WebAdminService implements AdminService {
         coworkingSpaceRepository.save(spaceToUpdate);
     }
 }
+
+// POST /orders
+// "{
+//     "name": "Order 1",
+//     "type": "Type 1",
+//     "price": 100.0
+// }"
+
+// @PostMapping(path = "/orders")
+// public StatusResponseDto addOrder(OrderDto order)
+
+// public class OrderDto {
+//     private String name;
+//     private String type;
+//     private double price;
+// }
+
+// public class StatusResponseDto {
+//     private boolean success;
+// }
+
+// {
+//     "success": true
+// }
