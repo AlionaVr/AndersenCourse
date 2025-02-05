@@ -13,7 +13,6 @@ import org.tasks.reservation.repository.CoworkingSpaceBookingRepository;
 import org.tasks.reservation.repository.CoworkingSpaceRepository;
 import org.tasks.reservation.service.CustomerService;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -26,12 +25,12 @@ public class CustomerController {
     @GetMapping("/coworkingBookingSpaces")
     public String viewAvailableSpaces(Model model) {
         populateSpacesAndReservations(model);
-        return "templates/reservations.html";
+        return "reservations.html";
     }
 
     private void populateSpacesAndReservations(Model model) {
-        List<CoworkingSpace> availableSpaces = coworkingSpaceRepository.getAvailableSpaces();
-        List<CoworkingSpaceBooking> reservations = coworkingSpaceBookingRepository.getMyReservations();
+        List<CoworkingSpace> availableSpaces = coworkingSpaceRepository.findCoworkingSpaceByAvailability(true);
+        List<CoworkingSpaceBooking> reservations = coworkingSpaceBookingRepository.findAll();
 
         model.addAttribute("AvailableSpaces", availableSpaces);
         model.addAttribute("MyReservation", reservations);
@@ -46,14 +45,14 @@ public class CustomerController {
     ) {
         StatusResponseDto response;
         try {
-            customerService.reserve(id, bookingDetails, LocalDate.parse(spaceDate));
+            customerService.reserve(id, bookingDetails);
             response = new StatusResponseDto();
         } catch (Exception ex) {
             response = new StatusResponseDto(ex.getMessage());
         }
         model.addAttribute("reserveResponseDto", response);
         populateSpacesAndReservations(model);
-        return "templates/reservations.html";
+        return "reservations.html";
     }
     @PostMapping("/reservations/cancel")
     public String cancelReservation(@RequestParam("id") Integer id) {
