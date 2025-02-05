@@ -51,27 +51,3 @@ public class WebAdminService implements AdminService {
         coworkingSpaceRepository.save(spaceToUpdate);
     }
 }
-
-// POST /orders
-// "{
-//     "name": "Order 1",
-//     "type": "Type 1",
-//     "price": 100.0
-// }"
-
-// @PostMapping(path = "/orders")
-// public StatusResponseDto addOrder(OrderDto order)
-
-// public class OrderDto {
-//     private String name;
-//     private String type;
-//     private double price;
-// }
-
-// public class StatusResponseDto {
-//     private boolean success;
-// }
-
-// {
-//     "success": true
-// }
