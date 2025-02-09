@@ -8,7 +8,7 @@ import org.tasks.reservation.repository.CoworkingSpaceRepository;
 import org.tasks.reservation.service.AdminService;
 
 
-@Service("webAdminService")
+@Service
 @RequiredArgsConstructor
 public class WebAdminService implements AdminService {
 

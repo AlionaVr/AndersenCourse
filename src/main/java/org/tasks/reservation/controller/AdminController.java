@@ -1,6 +1,6 @@
 package org.tasks.reservation.controller;
 
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +18,6 @@ import java.util.List;
 public class AdminController {
     private final CoworkingSpaceRepository coworkingSpaceRepository;
 
-    @Qualifier("webAdminService")
     private final AdminService adminService;
 
     public AdminController(CoworkingSpaceRepository coworkingSpaceRepository, AdminService adminService) {
@@ -38,6 +37,7 @@ public class AdminController {
         model.addAttribute("types", TypeOfSpace.values());
     }
 
+    @Secured("ROLE_ADMIN")
     @PostMapping(path = "/coworkingSpace")
     public String addCoworkingSpace(
             @RequestParam(name = "name") String name,
@@ -49,6 +49,7 @@ public class AdminController {
         return "redirect:/coworkingSpaces";
     }
 
+    @Secured("ROLE_ADMIN")
     @GetMapping("/coworkingSpace/delete")
     public String deleteCoworkingSpace(@RequestParam("id") Integer id, Model model) {
         try {
@@ -61,6 +62,7 @@ public class AdminController {
         return "coworkingSpaces.html";
     }
 
+    @Secured("ROLE_ADMIN")
     @PostMapping(path = "/coworkingSpace/update")
     public String updateCoworkingSpace(
             @RequestParam(name = "id") int id,

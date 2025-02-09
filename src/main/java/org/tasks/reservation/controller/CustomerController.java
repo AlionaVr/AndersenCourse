@@ -54,6 +54,7 @@ public class CustomerController {
         populateSpacesAndReservations(model);
         return "reservations.html";
     }
+
     @PostMapping("/reservations/cancel")
     public String cancelReservation(@RequestParam("id") Integer id) {
         customerService.cancelReservation(id);
