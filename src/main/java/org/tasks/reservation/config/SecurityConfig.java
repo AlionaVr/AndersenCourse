@@ -1,5 +1,6 @@
 package org.tasks.reservation.config;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -11,12 +12,13 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.tasks.reservation.service.impl.MyUserDetailsService;
+
+import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity
@@ -46,15 +48,23 @@ public class SecurityConfig {
         return authConfig.getAuthenticationManager();
     }
 
+    private static void errorHandlingStrategy(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        if (request.getRequestURI().contains("/rest")) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        } else {
+            response.sendRedirect("/login");
+        }
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
+        return http
                 .authenticationProvider(daoAuthenticationProvider())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register", "/auth/login", "/auth/register").permitAll()
+                        .requestMatchers("/", "/login", "/register", "/auth/login", "/auth/register").permitAll()
                         .requestMatchers("/rest/coworkingSpaces/**").hasAuthority("ADMIN")
-                        .requestMatchers("/rest/coworkingBookingSpaces/**").hasAuthority("CUSTOMER")
+                        .requestMatchers("/rest/coworkingBookingSpaces/**").hasAnyAuthority("CUSTOMER", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -70,12 +80,12 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exception -> exception
+                        .accessDeniedHandler((request, response, accessDeniedException) ->
+                                errorHandlingStrategy(request, response))
                         .authenticationEntryPoint((request, response, authException) ->
-                                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied"))
-                );
-
-        return http.build();
+                                errorHandlingStrategy(request, response)
+                        ))
+                .build();
     }
 }
