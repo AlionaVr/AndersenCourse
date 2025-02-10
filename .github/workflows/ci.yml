@@ -12,7 +12,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -34,7 +33,7 @@ jobs:
         run: ./gradlew test --no-daemon
 
       - name: Upload JAR artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: application-jar
           path: build/libs/*.jar
