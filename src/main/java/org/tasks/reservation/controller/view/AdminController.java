@@ -1,6 +1,6 @@
-package org.tasks.reservation.controller;
+package org.tasks.reservation.controller.view;
 
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,13 +12,13 @@ import org.tasks.reservation.helper.TypeOfSpace;
 import org.tasks.reservation.repository.CoworkingSpaceRepository;
 import org.tasks.reservation.service.AdminService;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
 public class AdminController {
     private final CoworkingSpaceRepository coworkingSpaceRepository;
 
-    @Qualifier("webAdminService")
     private final AdminService adminService;
 
     public AdminController(CoworkingSpaceRepository coworkingSpaceRepository, AdminService adminService) {
@@ -26,8 +26,9 @@ public class AdminController {
         this.adminService = adminService;
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/coworkingSpaces")
-    public String viewCoworkingSpaces(Model model) {
+    public String viewCoworkingSpaces(Model model, Principal principal) {
         populateSpaces(model);
         return "coworkingSpaces.html";
     }
@@ -38,6 +39,7 @@ public class AdminController {
         model.addAttribute("types", TypeOfSpace.values());
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping(path = "/coworkingSpace")
     public String addCoworkingSpace(
             @RequestParam(name = "name") String name,
@@ -49,6 +51,7 @@ public class AdminController {
         return "redirect:/coworkingSpaces";
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/coworkingSpace/delete")
     public String deleteCoworkingSpace(@RequestParam("id") Integer id, Model model) {
         try {
@@ -61,6 +64,7 @@ public class AdminController {
         return "coworkingSpaces.html";
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping(path = "/coworkingSpace/update")
     public String updateCoworkingSpace(
             @RequestParam(name = "id") int id,

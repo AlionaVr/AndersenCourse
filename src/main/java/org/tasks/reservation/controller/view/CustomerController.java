@@ -1,4 +1,4 @@
-package org.tasks.reservation.controller;
+package org.tasks.reservation.controller.view;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -54,6 +54,7 @@ public class CustomerController {
         populateSpacesAndReservations(model);
         return "reservations.html";
     }
+
     @PostMapping("/reservations/cancel")
     public String cancelReservation(@RequestParam("id") Integer id) {
         customerService.cancelReservation(id);
