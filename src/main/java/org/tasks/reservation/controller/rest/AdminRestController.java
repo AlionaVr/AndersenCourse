@@ -1,9 +1,9 @@
 package org.tasks.reservation.controller.rest;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.tasks.reservation.entity.CoworkingSpace;
 import org.tasks.reservation.repository.CoworkingSpaceRepository;
@@ -13,20 +13,28 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/rest/coworkingSpaces")
-@RequiredArgsConstructor
+
 public class AdminRestController {
 
     private final CoworkingSpaceRepository coworkingSpaceRepository;
 
     private final AdminService adminService;
 
+    @Autowired
+    public AdminRestController(CoworkingSpaceRepository coworkingSpaceRepository, AdminService adminService) {
+        this.coworkingSpaceRepository = coworkingSpaceRepository;
+        this.adminService = adminService;
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
     public ResponseEntity<List<CoworkingSpace>> viewCoworkingSpaces() {
+        System.out.println("Контроллер вызван!");
         List<CoworkingSpace> spaces = coworkingSpaceRepository.findAll();
         return ResponseEntity.ok(spaces);
     }
 
-    @Secured("ADMIN")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
     public ResponseEntity<?> addCoworkingSpace(@RequestBody CoworkingSpace coworkingSpace) {
         try {
@@ -37,7 +45,7 @@ public class AdminRestController {
         }
     }
 
-    @Secured("ADMIN")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/delete/{id}")
     public ResponseEntity<?> deleteCoworkingSpace(@PathVariable(name = "id") int id) {
         try {
@@ -48,7 +56,7 @@ public class AdminRestController {
         }
     }
 
-    @Secured("ADMIN")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/update/{id}")
     public ResponseEntity<?> updateCoworkingSpace(@PathVariable(name = "id") int id,
                                                   @RequestBody CoworkingSpace updatedSpace) {
