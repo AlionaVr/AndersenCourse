@@ -1,4 +1,4 @@
-package org.tasks.reservation.controller.restControllers;
+package org.tasks.reservation.controller.rest;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

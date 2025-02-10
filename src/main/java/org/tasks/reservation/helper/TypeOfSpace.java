@@ -5,4 +5,3 @@ public enum TypeOfSpace {
     PRIVATE,
     ROOM
 }
-

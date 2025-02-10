@@ -1,0 +1,60 @@
+<!-- src/main/resources/templates/login.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+        }
+
+        .container {
+            width: 300px;
+            margin: 100px auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .msg {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Login</h2>
+    <div class="error" th:if="${errorMsg}" th:text="${errorMsg}"></div>
+    <div class="msg" th:if="${msg}" th:text="${msg}"></div>
+    <form method="post" th:action="@{/perform_login}">
+        <label for="username">Username:</label>
+        <input id="username" name="username" required type="text"/>
+        <label for="password">Password:</label>
+        <input id="password" name="password" required type="password"/>
+        <button type="submit">Login</button>
+    </form>
+    <p>Don't have an account? <a th:href="@{/register}">Register here</a>.</p>
+</div>
+</body>
+</html>

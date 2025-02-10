@@ -1,0 +1,60 @@
+<!-- src/main/resources/templates/register.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+        }
+
+        .container {
+            width: 300px;
+            margin: 100px auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Register</h2>
+    <div class="error" th:if="${errorMsg}" th:text="${errorMsg}"></div>
+    <form method="post" th:action="@{/register}">
+        <label for="username">Username:</label>
+        <input id="username" name="username" required type="text"/>
+        <label for="password">Password:</label>
+        <input id="password" name="password" required type="password"/>
+        <label for="role">Role:</label>
+        <select id="role" name="role">
+            <option selected value="CUSTOMER">CUSTOMER</option>
+            <option value="ADMIN">ADMIN</option>
+        </select>
+        <button type="submit">Register</button>
+    </form>
+    <p>Already have an account? <a th:href="@{/login}">Login here</a>.</p>
+</div>
+</body>
+</html>

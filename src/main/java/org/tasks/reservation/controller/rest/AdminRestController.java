@@ -1,4 +1,4 @@
-package org.tasks.reservation.controller.restControllers;
+package org.tasks.reservation.controller.rest;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,7 +26,7 @@ public class AdminRestController {
         return ResponseEntity.ok(spaces);
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ADMIN")
     @PostMapping
     public ResponseEntity<?> addCoworkingSpace(@RequestBody CoworkingSpace coworkingSpace) {
         try {
@@ -37,7 +37,7 @@ public class AdminRestController {
         }
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ADMIN")
     @GetMapping("/delete/{id}")
     public ResponseEntity<?> deleteCoworkingSpace(@PathVariable(name = "id") int id) {
         try {
@@ -48,7 +48,7 @@ public class AdminRestController {
         }
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ADMIN")
     @PostMapping("/update/{id}")
     public ResponseEntity<?> updateCoworkingSpace(@PathVariable(name = "id") int id,
                                                   @RequestBody CoworkingSpace updatedSpace) {

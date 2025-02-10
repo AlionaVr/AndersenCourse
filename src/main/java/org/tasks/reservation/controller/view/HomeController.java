@@ -1,4 +1,4 @@
-package org.tasks.reservation.controller;
+package org.tasks.reservation.controller.view;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
