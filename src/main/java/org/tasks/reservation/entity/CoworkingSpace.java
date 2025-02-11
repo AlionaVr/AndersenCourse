@@ -38,10 +38,6 @@ public class CoworkingSpace {
         this.availability = availability;
     }
 
-    public boolean isAvailable() {
-        return availability;
-    }
-
     @Override
     public String toString() {
         return String.format("id: %d\nName: %s\nType: %s\nPrice %.2f\nAvailability: %b", id, name, type, price, availability);

@@ -59,7 +59,7 @@ public class WebAdminService implements AdminService {
         spaceToUpdate.setName(updatedSpace.getName());
         spaceToUpdate.setType(updatedSpace.getType());
         spaceToUpdate.setPrice(updatedSpace.getPrice());
-        spaceToUpdate.setAvailability(updatedSpace.isAvailable());
+        spaceToUpdate.setAvailability(updatedSpace.isAvailability());
         System.out.println("Coworking space with ID " + idToUpdate + " updated successfully.");
         coworkingSpaceRepository.save(spaceToUpdate);
     }
