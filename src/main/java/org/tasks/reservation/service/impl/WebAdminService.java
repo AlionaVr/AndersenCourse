@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.tasks.reservation.entity.CoworkingSpace;
+import org.tasks.reservation.helper.TypeOfSpace;
 import org.tasks.reservation.repository.CoworkingSpaceRepository;
 import org.tasks.reservation.service.AdminService;
 
@@ -22,6 +23,18 @@ public class WebAdminService implements AdminService {
         } catch (IllegalArgumentException e) {
             System.err.println("Error adding coworking space");
         }
+    }
+
+    @Override
+    public CoworkingSpace createSpace(String name, String type, double price) {
+        CoworkingSpace coworkingSpace = CoworkingSpace.builder()
+                .name(name)
+                .type(TypeOfSpace.valueOf(type))
+                .price(price)
+                .availability(true)
+                .build();
+        System.out.println("Coworking space created!");
+        return coworkingSpace;
     }
 
     @Transactional

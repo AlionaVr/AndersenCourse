@@ -29,15 +29,17 @@ public class AdminRestController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
     public ResponseEntity<List<CoworkingSpace>> viewCoworkingSpaces() {
-        System.out.println("Контроллер вызван!");
         List<CoworkingSpace> spaces = coworkingSpaceRepository.findAll();
         return ResponseEntity.ok(spaces);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
-    public ResponseEntity<?> addCoworkingSpace(@RequestBody CoworkingSpace coworkingSpace) {
+    public ResponseEntity<?> addCoworkingSpace(@RequestParam String name,
+                                               @RequestParam String type,
+                                               @RequestParam double price) {
         try {
+            CoworkingSpace coworkingSpace = adminService.createSpace(name, type, price);
             adminService.addSpace(coworkingSpace);
             return ResponseEntity.status(HttpStatus.CREATED).body(coworkingSpace);
         } catch (Exception e) {

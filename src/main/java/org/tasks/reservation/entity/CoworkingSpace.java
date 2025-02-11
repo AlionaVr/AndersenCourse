@@ -1,13 +1,7 @@
 package org.tasks.reservation.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -36,10 +30,12 @@ public class CoworkingSpace {
     @Column
     private boolean availability = true;
 
-    public CoworkingSpace(String name, String type, double price) {
+    @Builder
+    public CoworkingSpace(String name, TypeOfSpace type, double price, boolean availability) {
         this.name = name;
-        this.type = TypeOfSpace.valueOf(type);
+        this.type = type;
         this.price = price;
+        this.availability = availability;
     }
 
     public boolean isAvailable() {

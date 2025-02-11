@@ -9,4 +9,6 @@ public interface AdminService {
     void removeSpace(int id);
 
     void updateSpace(int id, CoworkingSpace updatedSpace);
+
+    CoworkingSpace createSpace(String name, String type, double price);
 }
