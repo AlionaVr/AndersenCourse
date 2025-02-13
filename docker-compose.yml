@@ -23,6 +23,8 @@ services:
       - postgres
     networks:
       - my-network-between-db-and-spring-boot
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
 
 networks:
   my-network-between-db-and-spring-boot:

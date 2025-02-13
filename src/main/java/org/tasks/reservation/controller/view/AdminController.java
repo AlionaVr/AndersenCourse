@@ -46,8 +46,8 @@ public class AdminController {
             @RequestParam(name = "type") String type,
             @RequestParam(name = "price") String price
     ) {
-        CoworkingSpace coworkingSpace = new CoworkingSpace(name, type, Double.parseDouble(price));
-        adminService.addSpace(coworkingSpace);
+        CoworkingSpace addingSpace = adminService.createSpace(name, type, Double.parseDouble(price));
+        adminService.addSpace(addingSpace);
         return "redirect:/coworkingSpaces";
     }
 
@@ -73,7 +73,7 @@ public class AdminController {
             @RequestParam(name = "price") double price,
             Model model
     ) {
-        CoworkingSpace updatedSpace = new CoworkingSpace(name, type, price);
+        CoworkingSpace updatedSpace = adminService.createSpace(name, type, price);
         try {
             adminService.updateSpace(id, updatedSpace);
             model.addAttribute("updateResponseDto", new StatusResponseDto());
