@@ -36,9 +36,7 @@ public class CustomerRestController {
     @PostMapping("/reserve")
     public ResponseEntity<StatusResponseDto> reserveCoworkingSpace(
             @RequestParam(name = "id") int id,
-            @RequestParam(name = "bookingDetails") String bookingDetails,
-            @RequestParam(name = "spaceDate") String spaceDate
-    ) {
+            @RequestParam(name = "bookingDetails") String bookingDetails) {
         try {
             customerService.reserve(id, bookingDetails);
             return ResponseEntity.ok(new StatusResponseDto());
@@ -57,4 +55,3 @@ public class CustomerRestController {
         }
     }
 }
-
